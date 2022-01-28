@@ -1,5 +1,5 @@
 //====================================================Table Sql==============================================================//
---------------------------Create Customer Table------------------------------------
+----------------------------------------Create Customer Table-----------------------------------------------------
 CREATE COLUIMN TABLE "Customer"
 ("CUSTER_ID"  Integer NOT NULL Comment 'This is Customer Id', 
  "NAME"	      NVARCHAR(200) Comment 'Name of the Customer', 
@@ -7,12 +7,45 @@ CREATE COLUIMN TABLE "Customer"
   PRIMARY KEY ("CUSTER_ID")
  );
  
- ------------------------------Customer Address Table---------------------------------- 
+ ---------------------------------------Customer Address Table----------------------------------------------------- 
  
  CREATE COLUMN TABLE "Address"(
  "CUSTER_ID"  Integer NOT NULL Comment 'This is Customer Id',
  "STATE" NVARCHAR(100) Comment 'State of the Customer',
  "COUNTRY" NVARCHAR(100) Comment 'Country of the Customer residing',
+ "REGION" NVARCHAR(100) Comment 'Region of the Customer',
+   PRIMARY KEY ("CUSTER_ID")
+   );
+   
+ ---------------------------------------------Product Table-------------------------------------------------------- 
+ 
+  CREATE COLUMN TABLE "Prdoucts"(
+ "PRODUCT_ID"  Integer NOT NULL Comment 'Product Id',
+ "PRODUCT_TYPE" NVARCHAR(100) Comment 'Type of the Product',
+ "PRODUCT_NAME" NVARCHAR(100) Comment 'Name of the Product',
+ "CATEGORY" NVARCHAR(100) Comment 'Category of the Product ',
+   PRIMARY KEY ("PRODUCT_ID")
+   );
+ 
+ 
+ ---------------------------------------------Payment Type Table---------------------------------------------------
+
+CREATE COLUMN TABLE "PaymentMethods"(
+"PAYMENT_TYPE" CHAR(1) Comment 'Payment Types',
+"DESCRIPTION" NVARCHAR(300) Comment 'Payment Type Description',
+ PRIMARY KEY ("PAYMENT_TYPE")
+ )
+ 
+ -------------------------------------------Sales Represent Table--------------------------------------------------
+ 
+ CREATE COLUMN TABLE "Sales_Rep"(
+ "SALESREP_ID" NVARCHAR(100) Comment 'sales representative Id',
+ "SALESREP_NAME" NVARCHAR(100) Comment 'sales representative Name',
+ "LANG" NVARCHAR(10) Comment 'sales representative Language',
+  PRIMARY KEY ("SALESREP_ID")
+ )
+ 
+ ------------------------------------------Creating the Sales Order Table-----------------------------------------
  
  
  
@@ -20,3 +53,11 @@ CREATE COLUIMN TABLE "Customer"
  
  
  
+ 
+ 
+ 
+ 
+ 
+
+
+
