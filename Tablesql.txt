@@ -1,0 +1,22 @@
+//====================================================Table Sql==============================================================//
+--------------------------Create Customer Table------------------------------------
+CREATE COLUIMN TABLE "Customer"
+("CUSTER_ID"  Integer NOT NULL Comment 'This is Customer Id', 
+ "NAME"	      NVARCHAR(200) Comment 'Name of the Customer', 
+ "PHONENUMBER" Integer Comment 'Customer Phone Number',
+  PRIMARY KEY ("CUSTER_ID")
+ );
+ 
+ ------------------------------Customer Address Table---------------------------------- 
+ 
+ CREATE COLUMN TABLE "Address"(
+ "CUSTER_ID"  Integer NOT NULL Comment 'This is Customer Id',
+ "STATE" NVARCHAR(100) Comment 'State of the Customer',
+ "COUNTRY" NVARCHAR(100) Comment 'Country of the Customer residing',
+ 
+ 
+ 
+ 
+ 
+ 
+ 
