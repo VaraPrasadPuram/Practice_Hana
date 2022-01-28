@@ -47,6 +47,11 @@ CREATE COLUMN TABLE "PaymentMethods"(
  
  ------------------------------------------Creating the Sales Order Table-----------------------------------------
  
+ CREATE COLUMN TABLE Sales_Order(
+ "ORDER_NUMBER" INTEGER NOT NULL,
+ "CUSTER_ID"  Integer,
+ 
+ 
  
  
  
