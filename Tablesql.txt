@@ -1,6 +1,11 @@
+Creating the Schema 
+CREATE SCHEMA PRACTICE_BATCHONE
+
 //====================================================Table Sql==============================================================//
+
+
 ----------------------------------------Create Customer Table-----------------------------------------------------
-CREATE COLUIMN TABLE "Customer"
+CREATE COLUMN TABLE "Customer"
 ("CUSTER_ID"  Integer NOT NULL Comment 'This is Customer Id', 
  "NAME"	      NVARCHAR(200) Comment 'Name of the Customer', 
  "PHONENUMBER" Integer Comment 'Customer Phone Number',
