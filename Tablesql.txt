@@ -53,7 +53,7 @@ CREATE COLUMN TABLE "PaymentMethods"(
  ------------------------------------------Creating the Sales Order Table-----------------------------------------
  
  CREATE COLUMN TABLE Sales_Order(
- "ORDER_NUMBER" INTEGER NOT NULL Comment 'Order number',,
+ "ORDER_NUMBER" INTEGER NOT NULL Comment 'Order number',
  "CUSTER_ID"  Integer Comment 'This is Customer Id',
  "PRODUCT_ID"  Integer NOT NULL Comment 'Product Id',
  "PAYMENT_TYPE" CHAR(1) Comment 'Payment Types',
@@ -63,7 +63,7 @@ CREATE COLUMN TABLE "PaymentMethods"(
  "INVOICESTATUS" VARCHAR(10) Comment 'Invoice status of order',
  "PRICE" INTEGER  Comment 'Price of the proudct',
  "QUANTITY" INTEGER Comment 'Quantitys brought',
- "TOTALAMOUNT" INTEGER Comment 'Total Amount'
+ "TOTALAMOUNT" INTEGER Comment 'Total Amount',
  "CURRENCY" NVARCHAR(100) Comment 'Currency values'
  )
  
