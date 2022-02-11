@@ -1,0 +1,159 @@
+----------------------------------------Functions--------------------------------------
+System Functions 
+
+CREATE FUNCTION "FUNCTIONS"."ADD"(IN X INTEGER, NT Y INTEGER)
+Returns Z INTEGER
+Language SQLscript
+As
+Begin 
+Z= :x+:y;
+End;
+
+--------------------------------------Creaating Triggers-------------------------------
+
+Create trigger DTF.DTFTRIGGER
+After insert on "DTF"."DIMEMPLOYEE" for each row
+Begin
+INSERT INTO “DTF”.”DTFAUDIT”
+VALUES
+(CURRENT_TIMESTAMP, CURRENT_USER);
+End;
+-----------------------------------------------------------------------
+CREATE TABLE TARGET ( A INT);
+ CREATE TABLE SAMPLE ( A INT);
+ 
+  CREATE TRIGGER TEST_TRIGGER
+ AFTER INSERT ON TARGET FOR EACH ROW
+ BEGIN
+     DECLARE SAMPLE_COUNT INT;
+     SELECT COUNT(*) INTO SAMPLE_COUNT FROM SAMPLE;
+     IF :SAMPLE_COUNT = 0
+     THEN
+       INSERT INTO SAMPLE VALUES(5);
+     ELSEIF :SAMPLE_COUNT = 1
+     THEN
+       INSERT INTO SAMPLE VALUES(6);
+     END IF;
+ END;
+ 
+
+ INSERT INTO TARGET VALUES (1);
+ SELECT * FROM SAMPLE;
+ 5
+ INSERT INTO TARGET VALUES (2);
+ SELECT * FROM SAMPLE;
+ 5
+ 6
+ -------------------------------------------------------------------
+Followings are more example of create trigger. FOR/WHILE Example
+-----------------------------------------------------------------------
+ CREATE TABLE TARGET ( A INT);
+ CREATE TABLE SAMPLE ( A INT);
+ CREATE TRIGGER TEST_TRIGGER_WHILE_UPDATE
+ AFTER UPDATE ON TARGET
+ BEGIN
+     DECLARE found INT := 1;
+     DECLARE val INT := 1;
+     WHILE :found <> 0 DO
+         SELECT count(*) INTO found FROM sample WHERE a = :val;
+         IF :found = 0 THEN
+             INSERT INTO sample VALUES(:val);
+         END IF;
+         val := :val + 1;
+     END WHILE;
+ END;
+ CREATE TABLE TARGET ( A INT);
+ CREATE TABLE control_tab(id INT PRIMARY KEY, name VARCHAR(30), payment INT);                              
+ CREATE TABLE message_box(message VARCHAR(200), log_time TIMESTAMP);                           
+
+ CREATE TRIGGER TEST_TRIGGER_FOR_INSERT                             
+ AFTER INSERT ON TARGET                                             
+ BEGIN                                                              
+     DECLARE v_id        INT := 0;                                  
+     DECLARE v_name      VARCHAR(20) := '';                         
+     DECLARE v_pay       INT := 0;                                  
+     DECLARE v_msg       VARCHAR(200) := '';                        
+     DELETE FROM message_box;                                       
+     FOR v_id IN 100 .. 103 DO                                  
+         SELECT name, payment INTO v_name, v_pay FROM control_tab WHERE id = :v_id;                                      
+         v_msg := :v_name || ' has ' || TO_CHAR(:v_pay);            
+         INSERT INTO message_box VALUES (:v_msg, CURRENT_TIMESTAMP);
+     END FOR;                                                       
+ END;                                                               
+handler Examples
+
+ CREATE TABLE TARGET ( A INT);
+ CREATE TABLE MYTAB (I INTEGER PRIMARY KEY);
+ 
+ CREATE TRIGGER MYTRIG_SQLEXCEPTION
+ AFTER INSERT ON TARGET 
+ BEGIN
+     DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT ::SQL_ERROR_CODE, ::SQL_ERROR_MESSAGE FROM DUMMY;
+     INSERT INTO MYTAB VALUES (1);
+     INSERT INTO MYTAB VALUES (1);  -- expected unique violation error: 301
+     -- not reached
+ END;
+ 
+ CREATE TRIGGER MYTRIG_SQL_ERROR_CODE 
+ AFTER UPDATE ON TARGET 
+ BEGIN
+     DECLARE EXIT HANDLER FOR SQL_ERROR_CODE 301 SELECT ::SQL_ERROR_CODE, ::SQL_ERROR_MESSAGE FROM DUMMY;
+     INSERT INTO MYTAB VALUES (1);
+     INSERT INTO MYTAB VALUES (1);  -- expected unique violation error: 301
+     -- not reached
+ END;
+ 
+ CREATE TRIGGER MYTRIG_CONDITION 
+ AFTER DELETE ON TARGET 
+ BEGIN
+     DECLARE MYCOND CONDITION FOR SQL_ERROR_CODE 301;
+     DECLARE EXIT HANDLER FOR MYCOND SELECT ::SQL_ERROR_CODE, ::SQL_ERROR_MESSAGE FROM DUMMY;
+     INSERT INTO MYTAB VALUES (1);
+     INSERT INTO MYTAB VALUES (1);  -- expected unique violation error: 301
+     -- not reached
+ END;
+SIGNAL/RESIGNAL Examples
+
+ CREATE TABLE TARGET ( A INT);
+ CREATE TABLE MYTAB (I INTEGER PRIMARY KEY);
+ CREATE TABLE MYTAB_TRIGGER_ERR (err_code INTEGER, err_msg VARCHAR(30));
+
+ CREATE TRIGGER MYTRIG_SIGNAL 
+ AFTER INSERT ON TARGET 
+ BEGIN
+     DECLARE MYCOND CONDITION FOR SQL_ERROR_CODE 10001;
+     DECLARE EXIT HANDLER FOR MYCOND INSERT INTO MYTAB_TRIGGER_ERR VALUES (::SQL_ERROR_CODE, ::SQL_ERROR_MESSAGE);
+     INSERT INTO MYTAB VALUES (1);
+     SIGNAL MYCOND SET MESSAGE_TEXT = 'my error';
+     -- not reached
+ END;
+ CREATE TRIGGER MYTRIG_RESIGNAL
+ AFTER UPDATE ON TARGET 
+ BEGIN
+     DECLARE MYCOND CONDITION FOR SQL_ERROR_CODE 10001;
+     DECLARE EXIT HANDLER FOR MYCOND RESIGNAL;
+     INSERT INTO MYTAB VALUES (1);
+     SIGNAL MYCOND SET MESSAGE_TEXT = 'my error';
+     -- not reached
+ END;
+Transition variable Example
+
+ CREATE TABLE TARGET ( A INT, B VARCHAR(10));
+ CREATE TABLE SAMPLE_OLD ( A INT, B VARCHAR(10));
+ CREATE TABLE SAMPLE_NEW ( A INT, B VARCHAR(10));
+ INSERT INTO TARGET VALUES ( 1, 'oldvalue');
+
+ CREATE TRIGGER TEST_TRIGGER_VAR_UPDATE                   
+ AFTER UPDATE ON TARGET                                   
+ REFERENCING NEW ROW mynewrow, OLD ROW myoldrow          
+ FOR EACH ROW                                             
+ BEGIN                                                    
+  INSERT INTO SAMPLE_new VALUES(:mynewrow.a, :mynewrow.b); 
+  INSERT INTO SAMPLE_old VALUES(:myoldrow.a, :myoldrow.b);
+ END;                                                     
+
+ UPDATE TARGET SET b = 'newvalue' WHERE A = 1;
+ SELECT * FROM SAMPLE_NEW;
+ 1, 'newvalue'
+ SELECT * FROM SAMPLE_OLD;
+ 1, 'oldvalue'
