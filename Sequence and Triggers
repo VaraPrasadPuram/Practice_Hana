@@ -1,4 +1,4 @@
-Create procedure abap4."procedure_sales_report"(
+Create procedure "PRACTICE_BATCHONE"."procedure_sales_report"(
             in discount integer)
 Language sqlscript sql security invoker as
 /*********begin procedure script ************/
@@ -12,7 +12,7 @@ end;
 
 
 
-CREATE PROCEDURE SAP123.PALYER1(
+CREATE PROCEDURE "PRACTICE_BATCHONE".PALYER1(
         IN id INT,
         IN name VARCHAR(20),
         IN loc VARCHAR(20))
