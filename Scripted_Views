@@ -1,0 +1,80 @@
+ Please make sure that you follow the output strucure same as Var_out result
+ 
+ /********* Begin Procedure Script ************/ 
+ BEGIN 
+ 
+ Var_cust = SELECT  C."CUSTER_ID", "NAME", "PHONENUMBER","STATE", "COUNTRY", "REGION"
+				FROM "PRACTICE_BATCHONE"."Customer" as C inner join 
+				"PRACTICE_BATCHONE"."Address" as A
+				on C."CUSTER_ID" = A."CUSTER_ID";
+	
+ Var_sales = select S."CUSTER_ID","NAME", "PHONENUMBER","STATE", "COUNTRY", "REGION","PRODUCT_ID","SALESREP_ID","ORDER_DATE","DELIVERY_DATE",
+					"PRICE","QUANTITY","TOTALAMOUNT","CURRENCY" FROM "PRACTICE_BATCHONE"."SALES_ORDER" as S inner join :Var_cust as Cust
+					on S."CUSTER_ID" = Cust."CUSTER_ID";
+			
+var_out = SELECT "CUSTER_ID", 
+				"NAME", 
+				"PHONENUMBER",
+				"STATE",
+				"COUNTRY", 
+				"REGION",
+			    "PRICE",
+			    "QUANTITY",
+			    "TOTALAMOUNT",
+			    "CURRENCY" FROM :Var_sales;
+
+END /********* End Procedure Script ************/
+
+
+ /********* Begin Procedure Script ************/ 
+ BEGIN 
+ Var_cust = SELECT  C."CUSTER_ID", "NAME", "PHONENUMBER","STATE", "COUNTRY", "REGION"
+				FROM "PRACTICE_BATCHONE"."Customer" as C inner join 
+				"PRACTICE_BATCHONE"."Address" as A
+				on C."CUSTER_ID" = A."CUSTER_ID";
+	
+ Var_sales = select S."CUSTER_ID","NAME", "PHONENUMBER","STATE", "COUNTRY","REGION","PRODUCT_ID","SALESREP_ID","ORDER_DATE","DELIVERY_DATE",
+					"PRICE","QUANTITY","TOTALAMOUNT","CURRENCY" FROM "PRACTICE_BATCHONE"."SALES_ORDER" as S inner join :Var_cust as Cust
+					on S."CUSTER_ID" = Cust."CUSTER_ID";
+If(:IP_REGION = 'India')
+then	
+var_out = SELECT "CUSTER_ID", 
+				"NAME", 
+				"PHONENUMBER",
+				"STATE",
+				"COUNTRY", 
+				"REGION",
+			    "PRICE",
+			    "QUANTITY",
+			    "TOTALAMOUNT",
+			    "CURRENCY" FROM :Var_sales
+			    Where "COUNTRY" ='India';
+else if(:IP_REGION = 'China')
+then
+var_out = SELECT "CUSTER_ID", 
+				"NAME", 
+				"PHONENUMBER",
+				"STATE",
+				"COUNTRY", 
+				"REGION",
+			    "PRICE",
+			    "QUANTITY",
+			    "TOTALAMOUNT",
+			    "CURRENCY" FROM :Var_sales
+			    Where "COUNTRY" ='China';
+else
+var_out = SELECT "CUSTER_ID", 
+				"NAME", 
+				"PHONENUMBER",
+				"STATE",
+				"COUNTRY", 
+				"REGION",
+			    "PRICE",
+			    "QUANTITY",
+			    "TOTALAMOUNT",
+			    "CURRENCY" FROM :Var_sales;
+			    end if;
+			    end if;
+
+
+END /********* End Procedure Script ************/
