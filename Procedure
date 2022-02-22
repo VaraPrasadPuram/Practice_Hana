@@ -1,0 +1,14 @@
+Create procedure "PRACTICE_BATCHONE".SALES_PROC()
+Language sqlscript 
+SQL security invoker 
+as
+Begin
+/*********begin procedure script ************/
+SELECT  C."CUSTER_ID", "NAME", "PHONENUMBER","STATE", "COUNTRY", "REGION"
+				FROM "PRACTICE_BATCHONE"."Customer" as C inner join 
+				"PRACTICE_BATCHONE"."Address" as A
+				on C."CUSTER_ID" = A."CUSTER_ID";
+				
+	
+	
+end;
