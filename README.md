@@ -14,3 +14,7 @@ http://www.bestsaphanatraining.com/various-ways-to-insert-data-into-sap-hana-tab
 https://www.ifb-group.com/blog/en/union-vs-join/
 
  http://www.bestsaphanatraining.com/sap-hana-condition-statement-if-and-else-examples.html
+ 
+ Tiny World 
+ 
+ https://blogs.sap.com/2016/03/28/developing-with-xs-advanced-add-business-logic-with-nodejs/
