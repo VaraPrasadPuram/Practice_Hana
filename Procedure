@@ -12,3 +12,25 @@ SELECT  C."CUSTER_ID", "NAME", "PHONENUMBER","STATE", "COUNTRY", "REGION"
 	
 	
 end;
+---------------------------------------------------------------------------------
+PROCEDURE "get_po_header_data" ( IN in_state Varchar(100), IN in_country varchar(100), 
+out ex_error  nvarchar(100)
+)
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+ AS
+BEGIN
+DECLARE noc Integer;
+
+select count(*) INTO noc from "Cust_Info" where  "STATE" = :in_state AND "COUNTRY" = :in_country;
+
+IF :noc>=1 then 
+ex_error = 'ERROR: Content'||' '||:in_state ||' '||:in_country || 'Country is exist';
+else 
+INSERT INTO "Cust_Info" values(:in_state,:in_country);
+End if;
+end;	
+
+
+
