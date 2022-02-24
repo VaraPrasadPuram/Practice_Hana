@@ -21,3 +21,5 @@ https://www.ifb-group.com/blog/en/union-vs-join/
 
 ------------------------------Iteration
 https://blogs.sap.com/2014/01/23/using-loops-within-stored-procedures-for-etl-processes/
+
+http://www.hanaexam.com/p/for-loop-in-procedure.html
