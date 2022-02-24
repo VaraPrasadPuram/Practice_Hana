@@ -18,3 +18,6 @@ https://www.ifb-group.com/blog/en/union-vs-join/
  Tiny World 
  
  https://blogs.sap.com/2016/03/28/developing-with-xs-advanced-add-business-logic-with-nodejs/
+
+------------------------------Iteration
+https://blogs.sap.com/2014/01/23/using-loops-within-stored-procedures-for-etl-processes/
