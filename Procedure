@@ -1,3 +1,204 @@
+//////////////////////////Proecedures/////////////////////////////////////////////////////
+
+------------------------------------------Simple Hello World-------------------
+PROCEDURE "PRACTICE_BATCHONE::Procedure_Example" ( ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+select 'Hello World' from Dummy;
+END;
+call "PRACTICE_BATCHONE::Procedure_Example" ( )
+------------------------------------------------Declaring Variable and reading the data-----------------
+PROCEDURE "PRACTICE_BATCHONE::Procedure_Assign" ( ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+DECLARE V_VAL INTEGER;
+V_VAL := 10;
+select :V_VAL from Dummy;
+END;
+call "PRACTICE_BATCHONE::Procedure_Example" ( )
+
+--------------------------------------------------------Reading the input value at run time and do calculation-----------------------
+PROCEDURE "PRACTICE_BATCHONE::Procedure_Example" (IN V_VAL1 INT, IN V_VAL2 INT) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+DECLARE V_SUM INTEGER;
+V_SUM := :V_VAL1+ :V_VAL2;
+select :V_SUM from Dummy;
+END;
+
+--call "PRACTICE_BATCHONE::Procedure_Example" (10,20);
+--call "PRACTICE_BATCHONE::Procedure_Example" (V_VAL1=>50, V_VAL2=>20 );
+--call "PRACTICE_BATCHONE::Procedure_Example" (V_VAL2=>50, V_VAL1=>20 );
+
+-------------------------------------------------------  Declaring the Output Parameter-------------------------
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne" 
+(IN V_VAL1 INT, IN V_VAL2 INT, out V_SUM INTEGER) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+/*---DECLARE V_SUM INTEGER;---*/
+V_SUM := :V_VAL1+ :V_VAL2;
+select :V_SUM from Dummy;
+END;
+call  "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne"(10,20,?)
+
+------------------------------------Declaring multiple Output Parameters-----------------------------------------
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne" 
+(IN V_VAL1 INT, IN V_VAL2 INT, out V_SUM INTEGER,out V_SUB INTEGER) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+/*---DECLARE V_SUM INTEGER;---*/
+V_SUM := :V_VAL1+ :V_VAL2;
+V_SUB := :V_VAL1- :V_VAL2;
+select :V_SUM from Dummy;
+END;
+call  "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne"(10,20,?,?)
+
+-----------------------------------------------Calling procedure inside another procedure-------------------------
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER" ( ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+DECLARE RESULTVAL INTEGER;
+call  "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne"(10,20,V_SUM=>:RESULTVAL);
+select :RESULTVAL from dummy;
+END;
+
+call "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER" ( ) 
+
+------------------------------------------Reading the table data----------------------------------------------------
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER" ( ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+ 
+LT_DATA = SELECT "PRODUCT_ID", "PRODUCT_TYPE", "PRODUCT_NAME", "CATEGORY"
+		  FROM "PRACTICE_BATCHONE"."Prdoucts";
+		  
+	  SELECT * from :LT_DATA;
+END;
+
+--------------------------------------------REaading table data with output structure pointing local table data------------------
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER" ( out LT_Data "PRACTICE_BATCHONE"."Prdoucts") 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+ 
+LT_Data = SELECT "PRODUCT_ID", "PRODUCT_TYPE", "PRODUCT_NAME", "CATEGORY"
+		  FROM "PRACTICE_BATCHONE"."Prdoucts";
+		  
+		 select * from :LT_Data;
+END;
+
+--------------------------------------------Reaading table data with output structure pointing table type table ------------------
+
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER" ( out LT_Data "PRACTICE_BATCHONE"."TT_DATA") 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+ 
+LT_Data = SELECT "PRODUCT_ID", "PRODUCT_TYPE", "PRODUCT_NAME", "CATEGORY"
+		  FROM "PRACTICE_BATCHONE"."Prdoucts";
+		  
+		 select * from :LT_Data;
+END;
+
+The Table type table should always has the same naming convention as the select statement, If the select column names are different then what we have defind in table type 
+then you should have as and point that name
+
+--------------------------------------------------Reading data with IN and OUT parameter-----------------------------------------
+
+PROCEDURE "PRACTICE_BATCHONE::Proc_SimpleOne" 
+(INOUT V_VAL INT) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+V_VAL := :V_VAL+20;
+END;
+-----------------------------------------------------IF and ELSE Proce--------------------------------
+
+PROCEDURE "PRACTICE_BATCHONE::Proc_SimpleOne" 
+(IN LV_OPTION VARCHAR(100), IN V_VAL1 INT, IN V_VAL2 INT, OUT RESULT_VAL INTEGER ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+IF :LV_OPTION = 'ADD' THEN
+	RESULT_VAL:= :V_VAL1+ :V_VAL2;
+		ELSE IF :LV_OPTION = 'SUB' THEN
+	RESULT_VAL:= :V_VAL1-:V_VAL2;
+		ELSE IF :LV_OPTION = 'MUL' THEN
+	RESULT_VAL:= :V_VAL1*:V_VAL2;
+		ELSE
+		RESULT_VAL:= :V_VAL1/:V_VAL2;
+END IF;		
+END;
+
+---------------------------------------------calculating the new taxes based on the  values------------------------
+PROCEDURE "PRACTICE_BATCHONE::Proc_SimpleOne" 
+(out out_data "PRACTICE_BATCHONE"."TAX_CL" ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+lt_data = select "CUSTER_ID","PAYMENT_TYPE","SALESREP_ID","TOTALAMOUNT", 
+           CASE "CUSTER_ID" 
+           WHEN 100 THEN "TOTALAMOUNT"*0.2
+           WHEN 110 THEN "TOTALAMOUNT"*0.4 end as "TAX_VAL"  from "PRACTICE_BATCHONE"."SALES_ORDER";
+out_data =select * from :lt_data;
+END;
+condition statements are If and case only and if can be used in conditional executions.
+Note : -The Case statement should only be used in the select statement and it' can't be used in any other statements. 
+
+----------------------------------------------------For Loop Proceddure--------------------------------------------
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne"() 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+DECLARE LV_COUNT INTEGER := 1;
+FOR LV_COUNT IN 1.. 4
+DO
+select :LV_COUNT from dummy;
+END FOR;
+END;
+
+
+
+
+
+
 Create procedure "PRACTICE_BATCHONE".SALES_PROC()
 Language sqlscript 
 SQL security invoker 
