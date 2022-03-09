@@ -281,6 +281,169 @@ END FOR;
 END;
 
 ----------------------------------------------------------------------------DYNAMIC SQL IN PROCEDURE---------------------------------------------------
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL" ( IN LV_TABLE NVARCHAR(2000)) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+DECLARE LV_SQL VARCHAR(200);
+
+SELECT CONCAT('SELECT * FROM',:LV_TABLE) INTO LV_SQL from dummy;
+EXECUTE IMMEDIATE :LV_SQL;
+END;
+
+ call "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL"('"PRACTICE_BATCHONE"."Address"');
+ 
+-----------------------------------------------------------------PAssing the Values to Procedure------------------------------------------------  
+ PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL" ( IN LV_NUMBER INTEGER) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+DECLARE LV_SQL VARCHAR(200);
+
+SELECT CONCAT('SELECT * FROM WHERE CUSTOMER_ID>=',:LV_TABLE) INTO LV_SQL from dummy;
+EXECUTE IMMEDIATE :LV_SQL;
+END;
+call "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL"('205')
+
+------------------------------------------------------------Arrays In Procedure------------------------------------------------------------------------
+----------------------------One-----------------------------
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL" () 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	AS
+BEGIN
+DECLARE A NVARCHAR(200) ARRAY;
+A[1] := 'Prasad';
+SELECT :A[1] from DUMMY;
+END;
+------------------------------------------------------------------Declareing an Array and assigning values to an Array--------------------------
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL" () 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	AS
+BEGIN
+DECLARE A NVARCHAR(200) ARRAY:= ARRAY('Vara','Prasad','Puram');
+SELECT :A[3] from DUMMY;
+END;
+-----------------------------------------------------------Declaring array and unnsetting the arrays data------------------------------------
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL" () 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	AS
+BEGIN
+DECLARE A NVARCHAR(200) ARRAY:= ARRAY('Vara','Prasad','Puram');
+tab1 =  unnest(:A);
+select * from :tab1;
+END;
+
+PROCEDURE "build_product_list" (
+   out ex_products "Procedures.tt_product_sale_price" )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+   /*************************************
+       Write your procedure logic 
+   *************************************/
+  declare productid nvarchar(10) ARRAY;
+  declare category nvarchar(40) ARRAY;
+  declare price decimal(15,2) ARRAY;
+  declare saleprice decimal(15,2) ARRAY;
+ 
+  productid[1] := 'ProductA';
+  productid[2] := 'ProductB';
+  productid[3] := 'ProductC';
+    
+  category[1] := 'CategoryA';
+  category[2] := 'CategoryB';
+  category[3] := 'CategoryC';
+   
+  price[1] := 19.99;
+  price[2] := 29.99;
+  price[3] := 39.99;
+    
+  saleprice[1] := 15.99;
+  saleprice[2] := 25.99;
+  saleprice[3] := 35.99;
+ 
+  ex_products = unnest(:productId, :category, :price, :saleprice) 
+                    as ("PRODUCTID", "CATEGORY", "PRICE", "SALEPRICE");
+
+END;
+------------------------------------------Converting the table data column into an Array format--------------------------------
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL" () 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	AS
+BEGIN
+DECLARE LV_STATE NVARCHAR(200) ARRAY;
+tabledata = SELECT * from "PRACTICE_BATCHONE"."Address";
+LV_STATE:= ARRAY_AGG(:tabledata."STATE");
+
+SELECT :LV_STATE[2] from DUMMy;
+
+
+END;
+-------------------------------------------------------------------DECLARE EXIST HANDLERS TO CATCH EXCEPTION-------------------------------
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL" () 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	AS
+BEGIN
+DECLARE LV_COUNT INTEGER;
+
+DECLARE CUSTOMCONDITION CONDITION FOR  SQL_ERROR_CODE 10001;
+DECLARE EXIT HANDLER FOR CUSTOMCONDITION
+
+SELECT ::SQL_ERROR_CODE as "Error_Code", ::SQL_ERROR_MESSAGE as "Error_Message" from DUMMY;
+
+SELECT COUNT(*) INTO LV_COUNT FROM  "PRACTICE_BATCHONE"."SCENARIO2";
+
+IF LV_COUNT =0 THEN
+
+SIGNAL CUSTOMCONDITION SET MESSAGE_TEXT ='No data found in the table';
+END IF;
+
+END;
+
+==================================================Other Way of Handling the Exceptions in SAP HANA===================================================
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL" () 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	AS
+BEGIN
+DECLARE LV_COUNT INTEGER;
+
+DECLARE CUSTOMCONDITION CONDITION FOR  SQL_ERROR_CODE 10001;
+DECLARE EXIT HANDLER FOR CUSTOMCONDITION
+BEGIN
+SELECT ::SQL_ERROR_CODE as "Error_Code", ::SQL_ERROR_MESSAGE as "Error_Message" from DUMMY;
+END;
+
+SELECT COUNT(*) INTO LV_COUNT FROM  "PRACTICE_BATCHONE"."SCENARIO2";
+
+IF LV_COUNT=0 THEN
+
+SIGNAL CUSTOMCONDITION SET MESSAGE_TEXT = 'Input parameter can not be empty';  
+END IF;
+
+END;
+
+
+
 
 
 
