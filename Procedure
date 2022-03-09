@@ -194,6 +194,95 @@ select :LV_COUNT from dummy;
 END FOR;
 END;
 
+--------------------------------------------------------While Loop Procedure---------------------------------------------
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne"() 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+DECLARE LV_COUNT INTEGER := 4;
+DECLARE LV_CNT INTEGER :=1;
+		WHILE :LV_CNT<:LV_COUNT DO
+		SELECT :LV_CNT from dummy;
+		LV_CNT := :LV_CNT+1;
+		END WHILE;
+END;
+
+----------------------------------------------Break In Procedure-----------------------------------------------
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne"() 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+DECLARE LV_LOOP INTEGER := 3;
+DECLARE LV_COUNT INTEGER :=1;
+		LOOP
+		SELECT :LV_COUNT from dummy;
+		IF :LV_COUNT>= :LV_LOOP THEN
+		BREAK;
+		END IF;
+		LV_COUNT := :LV_COUNT+1;
+		END LOOP;
+END;
+-------------------------------------------------------------------------CURSOR-----------------------------------------------
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne"() 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+DECLARE LV_ROWCOUNT INTEGER;
+DECLARE LV_COUNT INTEGER :=0;
+DECLARE LV_CUSTERID INTEGER;
+DECLARE LV_NAME NVARCHAR(200);
+DECLARE LV_PHONENUMBER NVARCHAR(200);
+DECLARE CURSOR CURSOR_A FOR SELECT * FROM "PRACTICE_BATCHONE"."Customer";
+
+CREATE LOCAL TEMPORARY table #TEST(CUSTERID INTEGER,NAMEs NVARCHAR(200),PHONENUMBER NVARCHAR(200));
+SELECT COUNT(*) INTO LV_ROWCOUNT from "PRACTICE_BATCHONE"."Customer";
+
+OPEN CURSOR_A;
+		LOOP
+			IF :LV_COUNT< :LV_ROWCOUNT THEN 
+		    FETCH CURSOR_A INTO LV_CUSTERID,LV_NAME,LV_PHONENUMBER;
+		    LV_COUNT := :LV_COUNT+1;
+		    ELSE
+		    CLOSE CURSOR_A;
+			BREAK;
+			END IF;
+			END LOOP;
+	INSERT INTO #TEST VALUES(LV_CUSTERID,LV_NAME,LV_PHONENUMBER);
+	
+	SELECT * from #TEST;
+	DROP TABLE #TEST;
+
+END;
+------------------------------------------------------------------------CURSOR TO DELETE RECORD BY RECORD-----------------------------------------------------
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CURSOR" ( ) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+ AS
+BEGIN
+
+DECLARE CURSOR CUSTOMER_CUR FOR 
+SELECT * FROM  "PRACTICE_BATCHONE"."TEMP_CUST";
+
+FOR CUR_CUST as CUSTOMER_CUR DO
+     IF CUR_CUST.CUSTER_ID<200 THEN
+        DELETE FROM "PRACTICE_BATCHONE"."TEMP_CUST" where "CUSTER_ID" = CUR_CUST.CUSTER_ID;
+     END IF;
+END FOR;
+END;
+
+----------------------------------------------------------------------------DYNAMIC SQL IN PROCEDURE---------------------------------------------------
+
+
 
 
 
