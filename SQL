@@ -1,0 +1,24 @@
+This is mainly holds the SQL 
+Note:- The Anonymous block is supported only after the HANA 1.0 SP12
+Anonymous block disadvantages:--
+1) This are can't be used for productive performance
+2) Bad maintiance
+3) Every time we run, System needs to compile it.
+
+------------------------------------------------Calling Anonymus block with the input values at runtime passing---------------------------------------
+Do (in x integer =>?, in y Integer =>?)
+BEGIN
+Declare Z integer;
+Z := :x+:y;
+select Z from dummy;
+
+END;
+
+----------------------------------------------Calling Anonymus block with the input values passing while calling the block----------------------
+Do (in x integer =>5, in y Integer =>6)
+BEGIN
+Declare Z integer;
+Z := :x+:y;
+select Z from dummy;
+
+END;
