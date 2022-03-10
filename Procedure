@@ -1,5 +1,16 @@
 //////////////////////////Proecedures/////////////////////////////////////////////////////
 
+The Stored Procedure is compile and read the data for re use purpose.
+The objects inside the own of the procedure is _SYS_REPO.
+
+The INVOKER and DEFINER...
+When we create the procedure the owner of the procedure is _SYS_REPO, When any of the user in system is invoking the Procedure by default the invoking of the procedure 
+has to be done with the _SYS_REPO then you define Authorization as Definer.
+
+When ever the procedure is called, if the Procedure call should has to happen with the user authorization who defind that procedure then you can use the Invoker.
+SELECT * from Procedure where procedure_name like '%Add%';
+
+In the table type table, the column names all converted to uppercase even if it is lower case defind it will convert to upper case
 ------------------------------------------Simple Hello World-------------------
 PROCEDURE "PRACTICE_BATCHONE::Procedure_Example" ( ) 
 	LANGUAGE SQLSCRIPT
