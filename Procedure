@@ -10,7 +10,25 @@ has to be done with the _SYS_REPO then you define Authorization as Definer.
 When ever the procedure is called, if the Procedure call should has to happen with the user authorization who defind that procedure then you can use the Invoker.
 SELECT * from Procedure where procedure_name like '%Add%';
 
-In the table type table, the column names all converted to uppercase even if it is lower case defind it will convert to upper case
+In the table type table, the column names all converted to uppercase even if it is lower case defind it will convert to upper case.
+FROM HANA 2.0 onwards the SAP HANA supports the inserting of the records in the table type tables also, we have to use the 
+like the below syntax we can use for the delete and update on the table type table.
+syntax :table type table.Insert(followed columns, index)----Here the index indicates the row number which it is inserted the records in table.
+
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER" (in in_number INteger, 
+out results table(mul integer)) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+declare lv_count integer;
+declare ind integer := 1;
+for ind in 1..:in_number DO
+	:results.insert((:ind*10),ind);
+end for;
+END;
 ------------------------------------------Simple Hello World-------------------
 PROCEDURE "PRACTICE_BATCHONE::Procedure_Example" ( ) 
 	LANGUAGE SQLSCRIPT
