@@ -59,10 +59,49 @@ I will point to exit handler and will display the error code and error message.
 calling :call "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER"(0,?,?)
 
 
+ID", "PRODUCT_ID","TOTALAMOUNT", ("TOTALAMOUNT"*0.9) as DISCOUNT_AMT
+FROM "PRACTICE_BATCHONE"."SALES_ORDER" ;
+open proc;
+FOR iterate as proc DO
+
+/****The Insert into to table type table works in HANA 2.0*****/
+
+   :out_product.insert((iterate."CUSTER_ID", iterate."PRODUCT_ID",iterate."TOTALAMOUNT",iterate.DISCOUNT_AMT),proc::ROWCOUNT);
+END FOR;
+END;
+===============================Cursor with the Arrays===========================
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CURSOR" ( 
+out out_product table(CUSTER_ID INTEGER,PRODUCT_ID INTEGER,TOTALAMOUNT INTEGER, DISCOUNT_AMT INTEGER)
+)
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+/* The cursor proc is getting all the product_ids from sales order table*/
+DECLARE LV_CUSTER_ID INTEGER ARRAY;
+DECLARE LV_PRODUCT_ID INTEGER ARRAY;
+DECLARE LV_TOTALAMOUNT INTEGER ARRAY;
+DECLARE LV_DISCOUNT_AMT INTEGER ARRAY;
+DECLARE cursor proc for  SELECT "CUSTER_ID", "PRODUCT_ID","TOTALAMOUNT", ("TOTALAMOUNT"*0.9) as DISCOUNT_AMT
+FROM "PRACTICE_BATCHONE"."SALES_ORDER" ;
+/* open the cursor to read the data */
+open proc;
+FOR iterate as proc DO
+   ---:out_product.insert((iterate."CUSTER_ID", iterate."PRODUCT_ID",iterate."TOTALAMOUNT",iterate.DISCOUNT_AMT),proc::ROWCOUNT);
+   LV_CUSTER_ID[proc::ROWCOUNT] := iterate."CUSTER_ID";
+   LV_PRODUCT_ID[proc::ROWCOUNT] := iterate."PRODUCT_ID";
+   LV_TOTALAMOUNT[proc::ROWCOUNT] := iterate."TOTALAMOUNT";
+   LV_DISCOUNT_AMT[proc::ROWCOUNT] := iterate.DISCOUNT_AMT;
+   
+END FOR;
+ out_product = UNNEST(:LV_CUSTER_ID,:LV_PRODUCT_ID,:LV_TOTALAMOUNT,:LV_DISCOUNT_AMT) as 
+ 				   ("CUSTER_ID", "PRODUCT_ID","TOTALAMOUNT","DISCOUNT_AMT");
+END;
 
 
-
-
+********************************************************************************* Procedures*********************************************************************
+********************************************************************************* Examples***********************************************************************
 ------------------------------------------Simple Hello World-------------------
 PROCEDURE "PRACTICE_BATCHONE::Procedure_Example" ( ) 
 	LANGUAGE SQLSCRIPT
@@ -290,7 +329,87 @@ DECLARE LV_COUNT INTEGER :=1;
 		LV_COUNT := :LV_COUNT+1;
 		END LOOP;
 END;
--------------------------------------------------------------------------CURSOR-----------------------------------------------
+============================================================================CURSOR================================================================================
+ 	Cursor in sql script is a handler query.The result of the query is pointed by the Cursor
+1. Implicit Cursors ----This cursors are opened by database automatically to process the sql statements
+2. EXplicit Cursors----- This cursors are defind(assign query) by developer in order to process and execute the query.
+
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CURSOR" ( 
+out out_product_id INTEGER) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+/* The cursor proc is getting all the product_ids from sales order table*/
+
+DECLARE cursor proc for select  "PRODUCT_ID" FROM "PRACTICE_BATCHONE"."SALES_ORDER";
+/* open the cursor to read the data */
+open proc;
+/* hit the database table and read the first record, I will process record by record at a time */
+fetch proc into out_product_id;
+ 
+END;
+
+USE case :--- Design the Procedure where the output will be a table of procedure with some columns.
+Giving the 10% discount on theh "TOTALLAMOUNT"
+
+SELECT "CUSTER_ID", "PRODUCT_ID","TOTALAMOUNT", 
+("TOTALAMOUNT"*0.9) as disc_amt
+FROM "PRACTICE_BATCHONE"."SALES_ORDER" 
+
+The cursor is decrease the performance beacuse it occupies the memory and it will deals with memory for each record and it will leads to memory leaks 
+
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CURSOR" ( 
+out out_product table(CUSTER_ID INTEGER,PRODUCT_ID INTEGER,TOTALAMOUNT INTEGER, DISCOUNT_AMT INTEGER)
+)
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+/* The cursor proc is getting all the product_ids with the calculating discount from sales order table*/
+
+DECLARE cursor proc for  SELECT "CUSTER_ID", "PRODUCT_ID","TOTALAMOUNT", ("TOTALAMOUNT"*0.9) as DISCOUNT_AMT
+FROM "PRACTICE_BATCHONE"."SALES_ORDER" ;
+open proc;
+FOR iterate as proc DO
+
+/****The Insert into to table type table works in HANA 2.0*****/
+
+   :out_product.insert((iterate."CUSTER_ID", iterate."PRODUCT_ID",iterate."TOTALAMOUNT",iterate.DISCOUNT_AMT),proc::ROWCOUNT);
+END FOR;
+END;
+===============================Cursor with the Arrays===========================
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CURSOR" ( 
+out out_product table(CUSTER_ID INTEGER,PRODUCT_ID INTEGER,TOTALAMOUNT INTEGER, DISCOUNT_AMT INTEGER)
+)
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	READS SQL DATA AS
+BEGIN
+/* The cursor proc is getting all the product_ids from sales order table*/
+DECLARE LV_CUSTER_ID INTEGER ARRAY;
+DECLARE LV_PRODUCT_ID INTEGER ARRAY;
+DECLARE LV_TOTALAMOUNT INTEGER ARRAY;
+DECLARE LV_DISCOUNT_AMT INTEGER ARRAY;
+DECLARE cursor proc for  SELECT "CUSTER_ID", "PRODUCT_ID","TOTALAMOUNT", ("TOTALAMOUNT"*0.9) as DISCOUNT_AMT
+FROM "PRACTICE_BATCHONE"."SALES_ORDER" ;
+/* open the cursor to read the data */
+open proc;
+FOR iterate as proc DO
+   ---:out_product.insert((iterate."CUSTER_ID", iterate."PRODUCT_ID",iterate."TOTALAMOUNT",iterate.DISCOUNT_AMT),proc::ROWCOUNT);
+   LV_CUSTER_ID[proc::ROWCOUNT] := iterate."CUSTER_ID";
+   LV_PRODUCT_ID[proc::ROWCOUNT] := iterate."PRODUCT_ID";
+   LV_TOTALAMOUNT[proc::ROWCOUNT] := iterate."TOTALAMOUNT";
+   LV_DISCOUNT_AMT[proc::ROWCOUNT] := iterate.DISCOUNT_AMT;
+   
+END FOR;
+ out_product = UNNEST(:LV_CUSTER_ID,:LV_PRODUCT_ID,:LV_TOTALAMOUNT,:LV_DISCOUNT_AMT) as 
+ 				   ("CUSTER_ID", "PRODUCT_ID","TOTALAMOUNT","DISCOUNT_AMT");
+END;
 
 PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::Proc_SimpleOne"() 
 	LANGUAGE SQLSCRIPT
@@ -385,6 +504,8 @@ A[1] := 'Prasad';
 SELECT :A[1] from DUMMY;
 END;
 ------------------------------------------------------------------Declareing an Array and assigning values to an Array--------------------------
+
+NOTE :- Arrays can't retrurn in the procedure 
 
 PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_DYNAMIC_SQL" () 
 	LANGUAGE SQLSCRIPT
