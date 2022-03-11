@@ -29,6 +29,40 @@ for ind in 1..:in_number DO
 	:results.insert((:ind*10),ind);
 end for;
 END;
+=======================================================Handling the Exception handling the data====================================================
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER" (in in_number INteger, 
+out results table(mul integer),
+out error_tab table(error_code integer, error_message nvarchar(10000)))
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+	 AS
+BEGIN
+declare lv_count integer;
+declare ind integer := 1;
+DECLARE EXIT HANDLER FOR sqlexception
+error_tab = select ::SQL_ERROR_CODE as error_code, ::SQL_ERROR_MESSAGE  as error_message from dummy;
+
+for ind in 1..:in_number DO
+	:results.insert((:ind*10),ind);
+end for;
+if is_empty(:results) then
+SIGNAL SQL_ERROR_CODE 10001
+set message_text = 'there is no data in the table';
+END if;
+END;
+
+Note:- In the above Procedure, if any errors occures the exit handler will take care of the exception and displays the error message and error code.
+In the above Procedure, The record count of the table type table is is empty(contains Zero records) then the single defined in the if block will be called out
+I will point to exit handler and will display the error code and error message.
+
+calling :call "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER"(0,?,?)
+
+
+
+
+
+
 ------------------------------------------Simple Hello World-------------------
 PROCEDURE "PRACTICE_BATCHONE::Procedure_Example" ( ) 
 	LANGUAGE SQLSCRIPT
