@@ -1,0 +1,37 @@
+PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_TABLE_DTAE_CREATION" (
+in numbeofsales Integer
+) 
+	LANGUAGE SQLSCRIPT
+	SQL SECURITY INVOKER 
+	--DEFAULT SCHEMA <default_schema_name>
+ AS
+BEGIN
+DECLARE lv_product_id varchar(32);
+DECLARE lv_employee  varchar(32);
+DECLARE lv_order_id varchar(30);
+declare lv_size varchar(10);
+declare lv_price integer:= 0;
+declare lv_gross integer:=0;
+declare lv_t_price integer:=0;
+declare lv_t_gross integer:=0;
+declare i, j Integer;
+declare created_date varchar(40);
+declare changed_date varchar(40);
+
+FOR i in 1..:numbeofsales DO
+    select "PRODUCT_ID" into lv_product_id from "PRACTICE_BATCHONE"."SALES_ORDER" order by rand() limit 1;
+    select "CUSTER_ID" into lv_employee from "PRACTICE_BATCHONE"."SALES_ORDER" order by rand() limit 1;
+    select seq.nextval into lv_order_id from dummy;
+    ---select SYSUUID into lv_order_id from dummy;
+	select case cast(round(rand()*2+1)as integer) 
+	         when 1 then 'S'
+	         when 2 then 'M'
+			 when 3 then 'L' end as size into lv_size from dummy;
+    SELECT "PRICE" into lv_price FROM "PRACTICE_BATCHONE"."SALES_ORDER"  order by rand() limit 1;
+    lv_gross := lv_price*10;
+    lv_t_price := lv_price*0.1;
+    lv_t_gross := lv_gross*0.2;
+insert into "PRACTICE_BATCHONE"."RANDOM_DATA_GENRATION" values(:lv_product_id,:lv_employee,:lv_order_id,:lv_size,:lv_price,:lv_gross,:lv_t_price,:lv_t_gross,now(),now());	
+
+END FOR;
+END;
