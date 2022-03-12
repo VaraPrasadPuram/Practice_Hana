@@ -1,0 +1,207 @@
+Date Time Function in SAP HANA:-
+The Date Time Function in SAP HANA contains something different then the SQL SERVER.
+
+now late me explain one by one
+
+1.ADD_DAYS(d,n): Here d stands for date and n stands for the number of days you want to add into the date
+
+
+SELECT ADD_DAYS (TO_DATE ('2009-12-05', 'YYYY-MM-DD'), 35) "New date" FROM DUMMY;
+ add days
+ 2010-01-09
+1
+2
+3
+SELECT ADD_DAYS (TO_DATE ('2009-12-05', 'YYYY-MM-DD'), 35) "New date" FROM DUMMY;
+ add days
+ 2010-01-09
+2.ADD_MONTHS(d,n): Here d stands for date and n stands for the number of months you want to
+add into the date
+
+
+SELECT ADD_MONTHS (TO_DATE ('2010-12-05', 'YYYY-MM-DD'), 1) "New months" FROM DUMMY;
+ add months
+ 2011-01-05
+1
+2
+3
+SELECT ADD_MONTHS (TO_DATE ('2010-12-05', 'YYYY-MM-DD'), 1) "New months" FROM DUMMY;
+ add months
+ 2011-01-05
+3.ADD_SECONDS(t,n): Here t stands for the time and n stands for the number of seconds
+
+
+ SELECT ADD_SECONDS (TO_TIMESTAMP ('2012-01-01 23:30:45'), 60*30) "New Timestamp" FROM DUMMY;
+ 
+ add seconds
+ 2012-01-02 00:00:45.0
+1
+2
+3
+4
+ SELECT ADD_SECONDS (TO_TIMESTAMP ('2012-01-01 23:30:45'), 60*30) "New Timestamp" FROM DUMMY;
+ 
+ add seconds
+ 2012-01-02 00:00:45.0
+4.ADD_YEARS(d,n):Here d stands for the date and n stands for the numbers of the yeays.
+
+
+ SELECT ADD_YEARS (TO_DATE ('2009-12-05', 'YYYY-MM-DD'), 2) "add years" FROM DUMMY;
+ add years
+ 2011-12-05
+1
+2
+3
+ SELECT ADD_YEARS (TO_DATE ('2009-12-05', 'YYYY-MM-DD'), 2) "add years" FROM DUMMY;
+ add years
+ 2011-12-05
+5.CURRENT_DATE:This function returns the current local system date.
+
+
+SELECT CURRENT_DATE "Date" FROM DUMMY;
+ Date
+ 2015-07-11
+1
+2
+3
+SELECT CURRENT_DATE "Date" FROM DUMMY;
+ Date
+ 2015-07-11
+6.CURRENT_DATE: This function returns the current local system time.
+
+
+SELECT CURRENT_TIME "Time" FROM DUMMY;
+ Time
+ 12:17:20
+1
+2
+3
+SELECT CURRENT_TIME "Time" FROM DUMMY;
+ Time
+ 12:17:20
+7. CURRENT_TIMESTAMP:This returns the current local system timestamp information means date as well as time also.
+
+
+ SELECT CURRENT_TIMESTAMP "Timestamp" FROM DUMMY;
+ Timestamp
+ 2015-07-11 18:28:38.702
+1
+2
+3
+ SELECT CURRENT_TIMESTAMP "Timestamp" FROM DUMMY;
+ Timestamp
+ 2015-07-11 18:28:38.702
+8.DAYNAME (d): This function returns the weekday in English for date d , which you need to pass it.
+
+
+SELECT  DAYNAME ('2011-05-30') "DayName" FROM DUMMY; 
+DayName
+ MONDAY
+1
+2
+3
+SELECT  DAYNAME ('2011-05-30') "DayName" FROM DUMMY; 
+DayName
+ MONDAY
+9. DAYOFMONTH (d): This function returns an integer the day of the month for date d , which you need to pass it.
+
+
+ SELECT  DAYOFMONTH ('2015-08-01') "DayOfMonth" FROM DUMMY;
+DayOfMonth
+01 
+1
+2
+3
+ SELECT  DAYOFMONTH ('2015-08-01') "DayOfMonth" FROM DUMMY;
+DayOfMonth
+01 
+10.DAYOFYEAR (d): This function returns an integer representation of the day of the year for date d, which you need to pass it.
+
+
+SELECT  DAYOFYEAR ('2015-002-05') "DayOfYear" FROM DUMMY;
+ 
+ DayOfYear
+ 36
+1
+2
+3
+4
+SELECT  DAYOFYEAR ('2015-002-05') "DayOfYear" FROM DUMMY;
+ 
+ DayOfYear
+ 36
+11.DAYS_BETWEEN (d1, d2): It returns the number of days between two days d1 and d2
+
+
+SELECT DAYS_BETWEEN (TO_DATE ('2014-12-05', 'YYYY-MM-DD'), TO_DATE('2015-01-05', 'YYYY-MM-DD')) "DaysBetween" FROM DUMMY;
+1
+SELECT DAYS_BETWEEN (TO_DATE ('2014-12-05', 'YYYY-MM-DD'), TO_DATE('2015-01-05', 'YYYY-MM-DD')) "DaysBetween" FROM DUMMY;
+
+DaysBetween
+ 31
+1
+2
+DaysBetween
+ 31
+12.EXTRACT ({YEAR | MONTH | DAY | HOUR | MINUTE | SECOND} FROM d): This function returns the value of a specified DateTime field from date d, like you can get a year, month, day, hour, minute and second.
+
+
+SELECT  EXTRACT (YEAR FROM TO_DATE ('2015-01-04', 'YYYY-MM-DD')) "Extracted Value" FROM DUMMY;
+ Extracted Value
+ 2015
+1
+2
+3
+SELECT  EXTRACT (YEAR FROM TO_DATE ('2015-01-04', 'YYYY-MM-DD')) "Extracted Value" FROM DUMMY;
+ Extracted Value
+ 2015
+11. HOUR (t): This function returns an integer representation of the hour for time t.
+
+
+ SELECT  HOUR ('14:20:56') "Hour" FROM DUMMY;
+ Hour
+ 12
+1
+2
+3
+ SELECT  HOUR ('14:20:56') "Hour" FROM DUMMY;
+ Hour
+ 12
+12.LAST_DAY (d): This function returns the last day of the month that contains the date d.
+
+
+SELECT LAST_DAY (TO_DATE('2015-01-04', 'YYYY-MM-DD')) "LastDay" FROM DUMMY;
+LastDay
+2015-01-31
+1
+2
+3
+SELECT LAST_DAY (TO_DATE('2015-01-04', 'YYYY-MM-DD')) "LastDay" FROM DUMMY;
+LastDay
+2015-01-31
+14.Similarly we can get Minute and Month from the function MINUTE AND MONTH
+
+15. MONTHNAME(d): This function returns the name of the month in English for date d.
+
+
+ SELECT  MONTHNAME ('2011-05-30') "Monthname" FROM DUMMY;
+ Monthname
+ MAY
+1
+2
+3
+ SELECT  MONTHNAME ('2011-05-30') "Monthname" FROM DUMMY;
+ Monthname
+ MAY
+16. NEXT_DAY (d): This function returns the date of the next day after date d.
+
+
+ SELECT NEXT_DAY (TO_DATE ('2014-12-31', 'YYYY-MM-DD')) "NextDay" FROM DUMMY;
+ NextDay
+ 2015-01-01
+1
+2
+3
+ SELECT NEXT_DAY (TO_DATE ('2014-12-31', 'YYYY-MM-DD')) "NextDay" FROM DUMMY;
+ NextDay
+ 2015-01-01
