@@ -2,6 +2,7 @@ https://blogs.sap.com/2019/06/11/implementing-dynamic-join-to-showcase-measure-b
 
 Source Table-
 
+Create Table <SCHEMA>.”REVENUE_MARKET”( “REGION” VARCHAR(10), “PRODUCT” VARCHAR(15),”COMPANY” VARCHAR(10),”SALES” INT);
 REGION	PRODUCT	COMPANY	REVENUE
 APAC	WIPER	C1	20
 APAC	WIPER	C2	20
