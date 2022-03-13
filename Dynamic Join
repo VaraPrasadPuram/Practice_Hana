@@ -20,3 +20,38 @@ EMEA	DIAPER	C1	20
 EMEA	DIAPER	C2	20
 EMEA	DIAPER	C3	10
  
+=================================================
+CREATE COLUMN TABLE "EMPLOYEE_DYNAMIC" ("EMP NO" INTEGER,
+  "EMPLOYEE NAME" VARCHAR(200),
+  "EMPLOYEE TYPE" INTEGER,
+  "GENDER" VARCHAR(10),
+  "AGE" INTEGER ,
+  "REGION" VARCHAR(10),
+  "COUNTRY" VARCHAR (20),
+  "SALARY" DECIMAL(18, 0))
+insert into "EMPLOYEE_DYNAMIC" values(1,'Sachin',1,'M',40,'APAC','IND',50000); 
+    insert into "EMPLOYEE_DYNAMIC" values(2,'Ganguly',1,'M',42,'APAC','PAK',40000); 
+    insert into "EMPLOYEE_DYNAMIC" values(3,'Dravid',1,'M',40,'AMER','US',40000); 
+    insert into "EMPLOYEE_DYNAMIC" values(4,'Laxman',1,'M',43,'AMER','US',40000); 
+    insert into "EMPLOYEE_DYNAMIC" values(5,'Dhoni',1,'M',35,'EMEA','GER',40000); 
+    insert into "EMPLOYEE_DYNAMIC" values(6,'Sehwag',1,'M',36,'EMEA','GER',30000); 
+    insert into "EMPLOYEE_DYNAMIC" values(7,'Kohli',1,'M',23,'EMEA','UK',20000); 
+    insert into "EMPLOYEE_DYNAMIC" values(8,'Kumar',1,'M',22,'EMEA','GER',10000); 
+    insert into "EMPLOYEE_DYNAMIC" values(1,'Law',2,'M',24,'APAC','IND',30000); 
+    insert into "EMPLOYEE_DYNAMIC" values(2,'Eddie',2,'M',26,'EMEA','UK',150000); 
+    insert into "EMPLOYEE_DYNAMIC" values(3,'Paul',2,'M',23,'APAC','IND',120000); 
+    insert into "EMPLOYEE_DYNAMIC" values(4,'Howrang',2,'M',22,'AMER','US',60000); 
+    insert into "EMPLOYEE_DYNAMIC" values(5,'Xiayou',2,'F',22,'AMER','US',8000); 
+    insert into "EMPLOYEE_DYNAMIC" values(6,'Nina',2,'F',22,'AMER','CAN',70000); 
+    insert into "EMPLOYEE_DYNAMIC" values(1,'Federer',3,'M',30,'APAC','IND',1150000); 
+    insert into "EMPLOYEE_DYNAMIC" values(2,'Nadal',3,'M',29,'APAC','IND',5230000); 
+    insert into "EMPLOYEE_DYNAMIC" values(3,'Djokovic',3,29,24,'APAC','IND',5045000); 
+    insert into "EMPLOYEE_DYNAMIC" values(4,'Murray',3,'M',24,'APAC','CHN',55650000); 
+    insert into "EMPLOYEE_DYNAMIC" values(5,'Sampras',3,'M',44,'AMER','CAN',5660000); 
+    insert into "EMPLOYEE_DYNAMIC" values(6,'Agassi',3,'M',45,'AMER','US',5056000); 
+    insert into "EMPLOYEE_DYNAMIC" values(7,'Venus',3,'F',28,'AMER','US',9500500); 
+    insert into "EMPLOYEE_DYNAMIC" values(8,'Serena',3,'F',29,'AMER','US',9507000); 
+    insert into "EMPLOYEE_DYNAMIC" values(1,'Messi',4,'M',24,'APAC','IND',510000); 
+    insert into "EMPLOYEE_DYNAMIC" values(2,'Ronaldo',4,'M',28,'AMER','CAN',500); 
+    insert into "EMPLOYEE_DYNAMIC" values(3,'Xavi',4,'M',30,'EMEA','UK',5002300); 
+    insert into "EMPLOYEE_DYNAMIC" values(4,'Beckham',4,'M',40,'EMEA','UK',7850000);
