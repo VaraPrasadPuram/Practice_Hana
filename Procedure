@@ -15,6 +15,78 @@ FROM HANA 2.0 onwards the SAP HANA supports the inserting of the records in the 
 like the below syntax we can use for the delete and update on the table type table.
 syntax :table type table.Insert(followed columns, index)----Here the index indicates the row number which it is inserted the records in table.
 
+Inserting the record by record into a target table using the for loop
+considering the Row number and inserting the records
+
+PROCEDURE "Proc_iterate" ()
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+ AS
+BEGIN 
+declare i integer ;
+declare lv_count integer;
+declare LV_ADDRESS nvarchar(100);
+declare LV_CITY nvarchar(200);
+CREATE LOCAL TEMPORARY TABLE #ADDRE(ADDRESS_INFO nvarchar(100),CITY nvarchar(200));
+lt_data = SELECT "ADDRESSID","CITY",ROW_NUMBER() Over(order by "ADDRESSID") as ROW_NUM FROM "Addresses";
+select count(*) into lv_count from :lt_data;
+FOR i IN 1..:lv_count
+DO
+SELECT 	"ADDRESSID", "CITY" into LV_ADDRESS,LV_CITY from :lt_data 
+				where "ROW_NUM" = :i;
+				INSERT INTO #ADDRE VALUES(LV_ADDRESS,LV_CITY);
+END FOR;
+SELECT * FROM  #ADDRE;
+DROP TABLE  #ADDRE;
+END;
+==========================================Loading the date into the target table using the limit offset 1===================================================
+PROCEDURE "Proc_Validation" ()
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+ AS
+BEGIN
+	DECLARE LV_ADDRESSID NVARCHAR(10);
+	DECLARE LV_CITY NVARCHAR(30);
+	DECLARE LV_COUNTRY NVARCHAR(20);
+	DECLARE LV_REGION NVARCHAR(10);
+	DECLARE lv_row_count Integer;
+	DECLARE i integer;
+	DECLARE LV_MESSAGE varchar(5000);
+	select count(*) INTO lv_row_count from "Addresses";
+	CREATE LOCAL TEMPORARY TABLE #TEST_VALIDATION("ADDRESSID" NVARCHAR(10),"CITY" VARCHAR(5000));
+	
+	FOR i IN 1.. :lv_row_count-1 DO
+	SELECT "ADDRESSID","CITY" into LV_ADDRESSID,LV_CITY FROM "Addresses" LIMIT 1 OFFSET :i;
+	INSERT INTO #TEST_VALIDATION values(:LV_ADDRESSID,:LV_CITY );
+   END FOR;
+   select * from  #TEST_VALIDATION;
+   DROP TABLE #TEST_VALIDATION;
+   END;
+      
+============================================Loading the data into the target table by using the reverse records================================
+DO
+BEGIN 
+declare i integer ;
+declare lv_count integer;
+declare LV_ADDRESS nvarchar(100);
+declare LV_CITY nvarchar(200);
+CREATE LOCAL TEMPORARY TABLE #ADDRE(ADDRESS_INFO nvarchar(100),CITY nvarchar(200));
+lt_data = SELECT "ADDRESSID","CITY",ROW_NUMBER() Over(order by "ADDRESSID") as ROW_NUM FROM "Addresses";
+select count(*) into lv_count from :lt_data;
+FOR i IN REVERSe 1..:lv_count
+DO
+SELECT 	"ADDRESSID", "CITY" into LV_ADDRESS,LV_CITY from :lt_data 
+				where "ROW_NUM" = :i;
+				INSERT INTO #ADDRE VALUES(LV_ADDRESS,LV_CITY);
+END FOR;
+SELECT * FROM  #ADDRE;
+DROP TABLE  #ADDRE;
+END;
+
+      
+
 
 PROCEDURE "PRACTICE_BATCHONE"."PRACTICE_BATCHONE::PROC_CALLOTHER" (in in_number INteger, 
 out results table(mul integer)) 
