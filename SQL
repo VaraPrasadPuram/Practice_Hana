@@ -22,3 +22,29 @@ Z := :x+:y;
 select Z from dummy;
 
 END;
+
+Alter table "PRACTICE_BATCHONE"."CUSTOMER" Row;
+To alter Row Store to Column Store table:
+
+Alter table to add an additional column.          
+
+Alter table "PRACTICE_BATCHONE"."CUSTOMER" Add ("CITY" Nvarchar(35));
+ 
+Alter table  "PRACTICE_BATCHONE" Add ("Salary" Decimal(10,2));
+  
+To Add Primary Key for Existing table column
+
+Alter table "PRACTICE_BATCHONE"."SALES" Add primary key ("ID");
+Alter table "PRACTICE_BATCHONE"."SALES" Add primary key ("ID","NAME")
+
+Alter table to Drop column. 
+
+Alter table "PRACTICE_BATCHONE"."SALES" Drop ("CITY");
+
+
+service {
+"PRACTICE_BATCHONE"."SALES" as "EMPLOYEE";}
+  
+  
+  
+  
