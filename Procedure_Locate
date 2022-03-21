@@ -1,0 +1,57 @@
+ -- Sample CLOB Data  'SAPSPAU06200100000001|2500000001#SAPSPAU06200100000002|2500000002#SAPSPAU06200100000003|2500000003#
+  DECLARE V_RECORD_DELIMT VARCHAR(10) := '#';
+  DECLARE V_FIELD_DELIMT VARCHAR(10) := '|';
+     V_POS := 1;
+     V_LOCATE := 0;
+     V_FLAG := '';
+     V_LEN := LENGTH(:p_payload); --payload variable contains the actual CLOB data
+ 
+     WHILE V_FLAG != 'X' DO
+        V_LOCATE := LOCATE(:p_payload, :V_RECORD_DELIMT, :V_LOCATE + 1, 12); -- Locate the 12th occurrence of record delimiter
+            IF V_LOCATE > 0 THEN
+                 V_PACKAGE := TRIM(SUBSTRING(:p_payload, :V_POS, (:V_LOCATE - :V_POS) + 1)); --Extract only 12 records in V_PACKAGE including record delimiter
+            ELSE
+                IF V_POS > V_LEN THEN --Reached End of File. The CLOB contains records in multiples of 12
+               BREAK;
+              END IF;
+  --Reached End of File. The CLOB does not contains records in multiples of 12. Extract the last few records into  V_PACKAGE        
+                V_PACKAGE := TRIM(SUBSTRING(:p_payload, :V_POS));
+                V_FLAG := 'X'; -- End of Loop reached
+            END IF;
+        
+            WHILE LENGTH(:V_PACKAGE) > 0 DO  -- In the below Loop, extract individual records and fields to insert into Table
+             V_RECORD := TRIM(SUBSTR_BEFORE(:V_PACKAGE, :V_RECORD_DELIMT)); -- Extract a record from CLOB
+             I := 1; -- Reset Array Counter
+             ARRAY_ID := ARRAY(); -- Clear the Array
+         
+            WHILE  V_RECORD != '' DO                   
+                V_FIELD := SUBSTR_BEFORE(:V_RECORD, :V_FIELD_DELIMT); -- Extract a field from Record
+                V_LENGTH := LENGTH (:V_FIELD);
+                IF V_LENGTH != 0 THEN
+                ARRAY_ID[:I] := V_FIELD;
+                ELSE
+                --Check if this is the last field in the record or if further fields exist
+                  V_FIELD := SUBSTR_AFTER(:V_RECORD, :V_FIELD_DELIMT);
+                  V_LENGTH := LENGTH (:V_FIELD);
+                  IF V_LENGTH != 0 THEN -- There are more fields in the records
+                  ARRAY_ID[:I] := NULL;
+                  ELSE
+  ARRAY_ID[:I] := :V_RECORD;
+                  END IF;
+                END IF;
+                                   
+                 V_RECORD := SUBSTR_AFTER(:V_RECORD, :V_FIELD_DELIMT);
+                 I := :I + 1;
+         END WHILE;
+         
+         INSERT INTO <TARGET TABLE> VALUES(
+          :ARRAY_ID[1],
+          :ARRAY_ID[2]
+  );
+         
+         V_PACKAGE := SUBSTR_AFTER(:V_PACKAGE, :V_RECORD_DELIMT);          
+             
+          END WHILE;
+            V_POS := :V_LOCATE + 1; --skip the record delimiter
+    END WHILE;
+
