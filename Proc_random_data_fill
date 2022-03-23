@@ -35,3 +35,46 @@ insert into "PRACTICE_BATCHONE"."RANDOM_DATA_GENRATION" values(:lv_product_id,:l
 
 END FOR;
 END;
+
+-----------------------------------------------------------------------------------
+CREATE PROCEDURE "_SYS_BIC"."Match.procedures::updateAnag" (
+    in tfield tt_field,
+    out error tt_error
+ ) 
+
+ LANGUAGE SQLSCRIPT
+ SQL SECURITY INVOKER 
+ DEFAULT SCHEMA "_SYS_BIC"
+ AS
+
+BEGIN
+
+     declare _id integer; 
+     declare _field varchar(100);
+     declare _value varchar(100);
+
+     select ID, F_NAME, F_VALUE
+     into _id, _field, _value
+     from :tfield;
+
+    IF(:_field = '' OR _:value = '') THEN
+        error = SELECT 400 AS http_status_code,
+                 'empty field' as error_message,
+                  'All fields must be filled' as detail from dummy;
+    ELSE
+
+    IF (:_field = 'name') THEN
+        UPDATE "_SYS_BIC"."TEST_TABLE" 
+        SET NAME = :_value
+        WHERE ID = :_id;
+    END IF;
+
+    IF (:_field = 'surname') THEN
+        UPDATE "_SYS_BIC"."TEST_TABLE" 
+        SET SURNAME = :_value
+        WHERE ID = :_id;
+    END IF;
+
+    END IF;
+
+END; 
