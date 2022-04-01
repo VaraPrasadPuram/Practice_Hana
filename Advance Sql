@@ -22,8 +22,9 @@ Note --> The EXEC statement potentially will not resulting any of the ouput i wi
 ================================================EXECUTE IMMEDIATE===========================================
 
 Using EXECUTE IMMEDIATE Statement
-In contrast to executing a string using EXEC, executing the string using EXECUTE IMMEDIATE 
-returns a result set.
+In contrast to executing a string using EXEC, 
+
+Note-----> executing the string using EXECUTE IMMEDIATE returns a result set.
 
 PROCEDURE "PROC_EXECUTE_IMMEDIATE"(IN im_product_filter_string NVARCHAR(100))
    LANGUAGE SQLSCRIPT
@@ -36,4 +37,21 @@ END;
 
 calling the Procedure -----> CALL "XSA_PRACTICE_HDI_DB_1"."PROC_EXEC"(IM_PRODUCT_FILTER_STRING => 'AND CATEGORY = ''Notebooks''')
 
-
+PROCEDURE "PROC_EXCUTEIMMEDIATE"()
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+ AS
+BEGIN
+ declare res varchar(10000);
+ declare output integer;
+ res =  'SELECT COUNT(*) FROM  "MD.Products" WHERE "CATEGORY" In(''Laser printers'')';
+ EXECUTE IMMEDIATE res into output;
+   if(output=3) then
+   select * from "MD.Products";
+   Else
+   select * from "MD.Employees";
+   END IF;
+   The Execute immediate will result the returning the resultant value.
+   
+   
