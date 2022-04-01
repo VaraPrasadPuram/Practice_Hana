@@ -60,4 +60,22 @@ In contrast to EXEC and EXECUTE IMMEDIATE, APPLY_FILTER is sql injection save. F
 
 This allows further processing of the result by referring to the table variable. As APPLY_FILTER does not allow executing dynamic DML/DDL 
 statements the procedure can be flagged read only which allows further optimization.
+
+PROCEDURE "PROC_APPLYFILTER"(IN im_product_filter_string NVARCHAR(100),
+out ex_output_tab_data table ("PRODUCTID" NVARCHAR(10),	
+							  "CATEGORY" NVARCHAR(30),
+							  "NAMEID" NVARCHAR(10),
+							  "PRICE" DECIMAL(10, 2)))
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+	before_fillter_data = SELECT * FROM  "MD.Products";
+	ex_output_tab_data = APPLY_FILTER(:before_fillter_data,:im_product_filter_string);
+	
+END;
+
+calling the Procedure ---> CALL "XSA_PRACTICE_HDI_DB_1"."PROC_APPLYFILTER"(IM_PRODUCT_FILTER_STRING => '"CATEGORY"=''Handheld''',
+EX_OUTPUT_TAB_DATA => ?)
    
