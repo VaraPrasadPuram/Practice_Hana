@@ -100,3 +100,82 @@ BEGIN
 ex_products =APPLY_FILTER(“SAP_HANA_EPM_DEMO”.“sap.hana.democontent.epm.data::products”, :im_filter_string) ;
 END;
 
+========================================================Apply Filter With the Anonoymous Block=======================================================
+DO(IN im_product_filter_string varchar(2000) => '"CATEGORY"=''Handheld''')
+Begin
+before_fillter_data = SELECT * FROM  "MD.Products";
+
+filter_data = APPLY_FILTER(:before_fillter_data,:im_product_filter_string);
+
+li_product_data = 	SELECT   a."PRODUCTID",
+				 "DELIVERYDATE" 
+				  FROM "PO.Item" as a inner join :filter_data as b
+			          on a."PRODUCTID" = b."PRODUCTID";
+							
+outputdata= 		SELECT  "PRODUCTID",
+				"DELIVERYDATE",
+				 COUNT("PRODUCTID") as NUMBER_PRODUCT_DELIVERED FROM :li_product_data
+				 GROUP BY "PRODUCTID",
+				 "DELIVERYDATE"
+				  order by "PRODUCTID","DELIVERYDATE";
+							
+final_outcome = 	SELECT 	p1."PRODUCTID",
+				p1."DELIVERYDATE",
+				p1."NUMBER_PRODUCT_DELIVERED",
+				sum(p2."NUMBER_PRODUCT_DELIVERED") as "CUMULATIVE_SUM"
+				FROM :outputdata as p1 inner join :outputdata p2 
+				on p1."PRODUCTID" = p2."PRODUCTID"
+				GROUP BY 
+				p1."PRODUCTID",
+				p1."DELIVERYDATE",
+				p1."NUMBER_PRODUCT_DELIVERED";
+							
+												
+ select * from 	:final_outcome;
+ end;
+
+PROCEDURE "PROC_CUMULATIVE"(IN im_product_filter_string NVARCHAR(100))
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+before_fillter_data = SELECT * FROM  "MD.Products";
+
+filter_data = APPLY_FILTER(:before_fillter_data,:im_product_filter_string);
+
+li_product_data = 	SELECT   a."PRODUCTID",
+				 "DELIVERYDATE" 
+				  FROM "PO.Item" as a inner join :filter_data as b
+			          on a."PRODUCTID" = b."PRODUCTID";
+							
+outputdata= 		SELECT  "PRODUCTID",
+				"DELIVERYDATE",
+				 COUNT("PRODUCTID") as NUMBER_PRODUCT_DELIVERED FROM :li_product_data
+				 GROUP BY "PRODUCTID",
+				 "DELIVERYDATE"
+				  order by "PRODUCTID","DELIVERYDATE";
+							
+final_outcome = 	SELECT 	p1."PRODUCTID",
+				p1."DELIVERYDATE",
+				p1."NUMBER_PRODUCT_DELIVERED",
+				sum(p2."NUMBER_PRODUCT_DELIVERED") as "CUMULATIVE_SUM"
+				FROM :outputdata as p1 inner join :outputdata p2 
+				on p1."PRODUCTID" = p2."PRODUCTID"
+				GROUP BY 
+				p1."PRODUCTID",
+				p1."DELIVERYDATE",
+				p1."NUMBER_PRODUCT_DELIVERED";
+							
+												
+ select * from 	:final_outcome;
+END;
+
+
+
+
+
+
+
+
+
