@@ -1,0 +1,5 @@
+EXEC 'SELECT count(*) FROM 
+"SAP_HANA_EPM_NEXT"."sap.hana.democontent.epmNext.data::MD
+.Products" where CATEGORY NOT IN (''Laser printers'')' 
+ || :im_product_filter_string ;
+END
