@@ -1,5 +1,10 @@
+------------------------------------------------This is about the Dynamic SQl Statement--------------------------------------------
+**dynamic SQL is not supported in "Read-only" procedures, you must remove the "READS SQL DATA" keywords as shown here ***
+
 EXEC 'SELECT count(*) FROM 
 "SAP_HANA_EPM_NEXT"."sap.hana.democontent.epmNext.data::MD
 .Products" where CATEGORY NOT IN (''Laser printers'')' 
  || :im_product_filter_string ;
 END
+
+calling the Procedure  'AND CATEGORY = ''Notebooks'''
