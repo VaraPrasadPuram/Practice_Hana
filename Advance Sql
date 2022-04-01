@@ -54,4 +54,10 @@ BEGIN
    END IF;
    The Execute immediate will result the returning the resultant value.
    
+   ==========================================================Using APPLY FILTER Statement==================================================================
+   
+In contrast to EXEC and EXECUTE IMMEDIATE, APPLY_FILTER is sql injection save. Furthermore the result of the APPLY_FILTER will be assigned to a table variable. 
+
+This allows further processing of the result by referring to the table variable. As APPLY_FILTER does not allow executing dynamic DML/DDL 
+statements the procedure can be flagged read only which allows further optimization.
    
