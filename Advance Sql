@@ -1,10 +1,23 @@
 ------------------------------------------------This is about the Dynamic SQl Statement--------------------------------------------
 **dynamic SQL is not supported in "Read-only" procedures, you must remove the "READS SQL DATA" keywords as shown here ***
 
-EXEC 'SELECT count(*) FROM 
-"SAP_HANA_EPM_NEXT"."sap.hana.democontent.epmNext.data::MD
-.Products" where CATEGORY NOT IN (''Laser printers'')' 
- || :im_product_filter_string ;
+PROCEDURE "PROC_EXEC"(IN im_product_filter_string NVARCHAR(100))
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   --DEFAULT SCHEMA <default_schema_name>
+   READS SQL DATA AS
+BEGIN
+EXEC 'SELECT COUNT(*) FROM  "MD.Products" WHERE "CATEGORY" In(''Laser printers'')'+'AND CATEGORY = ''Notebooks''';
 END
 
-calling the Procedure  'AND CATEGORY = ''Notebooks'''
+Do
+BEGIN
+EXEC 'SELECT COUNT(*) FROM  "MD.Products" WHERE "CATEGORY" In(''Laser printers'')'||'AND CATEGORY = ''Notebooks''';
+END;
+
+calling the Procedure -----> CALL "XSA_PRACTICE_HDI_DB_1"."PROC_EXEC"(IM_PRODUCT_FILTER_STRING => 'AND CATEGORY = ''Notebooks''')
+
+Note --> The EXEC statement potentially will not resulting any of the ouput i will excute the satement itself.
+
+
+
