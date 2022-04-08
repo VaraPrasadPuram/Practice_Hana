@@ -170,6 +170,48 @@ final_outcome = 	SELECT 	p1."PRODUCTID",
 												
  select * from 	:final_outcome;
 END;
+============================================================Exception Handlings=======================================================
+-------------------------------------Declare exit handlers for generic SQL exceptions--------------------
+
+DECLARE EXIST HANDLER FOR SQLEXCEPTION
+BEGIN
+ex_message := 'SQL EXCEPTION occured!!'||
+	      ::SQL_ERROR_CODE||' '||
+	      ::SQL_ERROR_MESSAGE;
+END;
+-----------------------Declare exit handlers for specific SQL error code---------------------------	     
+
+DECLARE EXIST HANDLER FOR SQL_ERROR_CODE 301
+BEGIN
+ex_message := 'SQL EXCEPTION occured!!'||
+	      ::SQL_ERROR_CODE||' '||
+	      ::SQL_ERROR_MESSAGE;
+END;
+
+---------------------------Signaling and catching user-defined conditions----------------------------
+
+DECLARE MYCONDITION_11 CONDITION FOR SQL_ERROR_CODE 10001
+
+DECLARE EXIST HANDLER FOR MYCONDITION_11--------------------------RESINGAL
+
+ex_message := 'SQL EXCEPTION occured!!'||::SQL_ERROR_CODE||' '||::SQL_ERROR_MESSAGE;
+
+END;
+IF :IP_VALUE1 ='' OR IP_VALUE2 = '' OR IP_CATE =' '
+THEN 
+SIGNAL MYCONDITION_11 SET MESSAGE_TEXT = 'Input parameters can't be empty';
+END IF;
+ 
+output : SQL EXCEPTION occured!!10001 Input parameters can't be empt
+
+
+
+
+
+
+
+
+
 
 
 
