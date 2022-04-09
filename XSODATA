@@ -1,0 +1,106 @@
+Creating the Odata Service with the Simple table 
+service {
+"PRACTICE_BATCHONE"."Prdoucts"  as "Address";
+}
+Reading the meta data of the table :- https://hxehost:4390/PRACTICE_BATCHONE/Address.xsodata/$metadata
+
+You can read the table data as JSON format by pointng the entity with the ?$format=json---->Address?$format=json
+
+Reading the data as the JSON format :- https://hxehost:4390/PRACTICE_BATCHONE/Address.xsodata/Address?$format=json
+
+-------------------------Generating the Primary key values while running the service at run time---------------------------
+service {
+"PRACTICE_BATCHONE"."Prdoucts"  as "Address" key generate local "GenID";
+}
+
+Reading the data as the JSON format :- https://hxehost:4390/PRACTICE_BATCHONE/Address.xsodata/Address?$format=json
+
+-------------------------------Reading the data from the service and selecting only the few columns-------------------------
+
+https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Address?$format=json&$select=PRODUCT_ID,PRODUCT_TYPE
+
+------------------------------Reading the service with filtering the data for the specific criteria--------------------------
+
+https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Address?$format=json&$filter=PRODUCT_ID eq 10004
+
+------------------------------Reading the data from the service with the only for the specific data in colunm like the where class -------
+
+https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Address?$format=json&$filter=substringof('Tables',PRODUCT_NAME)
+
+-----------------------------Reading the total count of the records of the entity through the service------------------------------
+
+https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Address/$count
+
+--------------------------Creating the service with selected columns inside the service itself.-----------------------------
+service {
+"PRACTICE_BATCHONE"."Prdoucts"  as "Address" with("PRODUCT_ID","PRODUCT_TYPE");
+}
+https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/$metadata
+
+-------------------------------Creating the Odata service with two entity sets ---------------------------------------
+
+service {
+"PRACTICE_BATCHONE"."Address"  as "Address" key generate local "GenID";
+"PRACTICE_BATCHONE"."Prdoucts"  as "Prdoucts";
+}
+
+https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/$metadata
+service for address---https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Address?$format=json
+service for products---https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Product?$format=json
+
+---------------------------------------Reading the data from db using the service only two records--------------------------
+here we will use the paging meaning the we will not display all the records at once meaning all the 1 billion records rather we will display as chunk 
+by chunk by using the &$top=2 and &$skip=2
+
+When you bind the Odata to SAP UI5 this paging will autaomatically handles and loading only the two records
+
+----------------------------------------displaying the only two records from the service call--------------------------------
+
+https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Prdoucts?$format=json&$top=2
+
+
+--------------------------------The output of the service will have the URL to get the single record also--------------------
+
+https://hxehost:4390/PRACTICE_BATCHONE/Address.xsodata/Prdoucts(10005)
+
+--------------------------------Creating the Odata service with the associations-------------------------------------------
+
+service {
+"PRACTICE_BATCHONE"."Customer" as "Customer_Info"
+navigates("Cust_Address" as "cust_add_info");
+"PRACTICE_BATCHONE"."Address"  as "Address_Info" key generate local "GenID";
+
+association "Cust_Address" principal "Customer_Info"("CUSTER_ID") multiplicity "1" 
+dependent "Address_Info"("CUSTER_ID") multiplicity "1";
+
+}
+
+https://hxehost:4390/PRACTICE_BATCHONE/Address.xsodata/Customer_Info?$format=json
+
+Service call to to navigates to relationed data through the navigational attributes and display the data for the assocaition entity name
+
+https://hxehost:4390/PRACTICE_BATCHONE/Address.xsodata/Customer_Info(170)/cust_add_info
+
+Service call to get the data for the relational entity set data 
+https://hxehost:4390/PRACTICE_BATCHONE/Address.xsodata/Customer_Info(170)?$expand=cust_add_info
+
+Service call to get the data for the relational entity set data with the Json format
+
+https://hxehost:4390/PRACTICE_BATCHONE/Address.xsodata/Customer_Info(170)?$expand=cust_add_info&$format=json
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
