@@ -46,7 +46,7 @@ service {
 
 https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/$metadata
 service for address---https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Address?$format=json
-service for products---https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Product?$format=json
+service for products---https://hxehost:4390//PRACTICE_BATCHONE/Address.xsodata/Prdoucts?$format=json
 
 ---------------------------------------Reading the data from db using the service only two records--------------------------
 here we will use the paging meaning the we will not display all the records at once meaning all the 1 billion records rather we will display as chunk 
