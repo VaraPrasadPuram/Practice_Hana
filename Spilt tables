@@ -1,0 +1,41 @@
+DO BEGIN
+    SQLSCRIPT_STRING AS LIB;
+    DECLARE a1, a2, a3 INT;
+    (a1, a2, a3) = LIB:SPLIT('10, 20, 30', ', '); --(10, 20, 30)
+END;
+ 
+DO BEGIN
+    USING SQLSCRIPT_STRING AS LIB;
+    DECLARE first_name, last_name STRING;
+    DECLARE area_code, first_num, last_num INT;
+    first_name = LIB:SPLIT('John Sutherland', ','); --('John Sutherland')
+    (first_name, last_name) = LIB:SPLIT('John Sutherland', ' '); --('John','Sutherland')
+    first_name = LIB:SPLIT('Brian', ' '); --('Brian')
+    (first_name, last_name) = LIB:SPLIT('Brian', ' '); -- throw SQL_FEW_VALUES
+    (first_name, last_name) = LIB:SPLIT('Michael Forsyth Jr', ' ');--throw SQL_MANY_VALUES
+    (first_name, last_name) = LIB:SPLIT('Michael Forsyth Jr', ' ', 1); --('Michael', 'Forsyth Jr')
+    (area_code, first_num, last_num) = LIB:SPLIT_REGEXPR('02)2143-5300', '\(|\)|-'); --(02, 2143, 5300)
+END;
+ 
+DO BEGIN
+    USING SQLSCRIPT_STRING AS LIB;
+    DECLARE arr INT ARRAY;
+    DECLARE arr2 STRING ARRAY;
+    DECLARE tv, tv2 TABLE(RESULT NVARCHAR(5000));
+ 
+    arr = LIB:SPLIT_TO_ARRAY('10,20,30,40,50',','); --array(10,20,30,40,50)
+    arr2 = LIB:SPLIT_REGEXPR_TO_ARRAY('Blake Kelly; Fred Randall; Bell Walsh; Leonard Quinn; Chris McDonald', '\s*;\s*'); --array('Blake Kelly', 'Fred Randall', 'Bell Walsh', 'Leonard Quinn', 'Chris McDonald')
+    tv = LIB:SPLIT_TO_TABLE('10,20,30,40,50',','); --table[(10),(20),(30),(40),(50)]
+    tv2 = LIB:SPLIT_TO_TABLE('10+20/30*40-50', '\+|\/|\*|-'); --table[(10),(20),(30),(40),(50)]
+END;
+
+Note
+The SPLIT_TO_TABLE function currently does not support implicit table variable declaration.
+CREATE PROCEDURE SPLIT_TO_TABLE_TEST AS BEGIN
+    USING SQLSCRIPT_STRING AS lib;
+    DECLARE tv TABLE(RESULT NVARCHAR(5000)); --Needs explicit table variable declaration
+    tv = LIB:SPLIT_TO_TABLE('a,b',',');
+    SELECT * FROM :tv;
+END;
+ 
+CALL SPLIT_TO_TABLE_TEST(); -- [(a), (b)]
