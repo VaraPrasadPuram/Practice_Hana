@@ -1,0 +1,15 @@
+-- code to list all tests and configurations contained in “TEST_LIBRARY_CATEGORY” library.
+CALL SYS.SQLSCRIPT_TEST:LIST_TESTS('{"schema":"<schema_name>","library":"*"}', ?);
+CALL SYS.SQLSCRIPT_TEST:LIST_CONFIGURATIONS('{"schema":"<schema_name>","library":"*"}', ?);
+
+
+-- code to execute ALL tests
+CALL SYS.SQLSCRIPT_RUN_TESTS_ON_ORIGINAL_DATA('{"schema":"<schema_name>","library":"*"}', ?, ?, ?);
+
+
+-- code to exclude some tests and configurations
+CALL SYS.SQLSCRIPT_RUN_TESTS_ON_ORIGINAL_DATA('{"schema":"<schema_name>","library":"*","run": [{"exclude-tests": ["TESTA", "TESTB"],"configurations": ["config1", "config3"]}]}', ?, ?, ?);
+
+
+-- code to show all test results
+select * from "HA150::UNIT_TEST_RESULTS";

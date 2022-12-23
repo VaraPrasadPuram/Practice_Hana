@@ -1,0 +1,14 @@
+
+--Testing the PC category 
+CALL "HA150_##_HDI_CONTAINER_1"."HA150::AnalyzeCompanyAssets"( 'PC',?);
+
+--Testing the Flat screens category 
+CALL "HA150_##_HDI_CONTAINER_1"."HA150::AnalyzeCompanyAssets"( 'Flat screens',?);
+
+--Testing any of the other 23 categories (other than PC or Flat screens 
+CALL "HA150_##_HDI_CONTAINER_1"."HA150::AnalyzeCompanyAssets"('Software',?);
+
+--Testing a category that does not exist (should throw an exception)
+CALL "HA150_##_HDI_CONTAINER_1"."HA150::AnalyzeCompanyAssets"('Automobiles',?);
+
+

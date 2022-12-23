@@ -1,0 +1,85 @@
+LIBRARY "HA150::TEST_LIBRARY_CATEGORY" LANGUAGE SQLSCRIPT TEST AS
+BEGIN
+
+--public variable comparison_list TABLE (PRODUCT_ID NVARCHAR(10), CURRENCY_CODE NVARCHAR(5), PRICE DECIMAL(15,2));
+
+
+  @TestSetUpLibrary()
+  PUBLIC procedure SetUpLibrary() as
+    begin
+        insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'SetUpLibrary', current_date, current_time);
+    end;
+  @TestTearDownLibrary()
+  PUBLIC procedure TearDownLibrary() as
+    begin
+        insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'TearDownLibrary', current_date, current_time);
+    end;
+  @TestSetUpConfig('config1')
+  PUBLIC procedure SetUpConfig1() as
+    begin
+       insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'SetUpConfig1()', current_date, current_time);
+
+    end;
+  @TestSetUpConfig('config2')
+  PUBLIC procedure SetUpConfig2() as
+    begin
+       insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'SetUpConfig2()', current_date, current_time);
+    end;
+  @TestSetUpConfig('config3')
+  PUBLIC procedure SetUpConfig3() as
+    begin
+       insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'SetUpConfig3()', current_date, current_time);
+    end;
+  @TestTearDownConfig('config1', 'config2', 'config3')
+  PUBLIC procedure TearDownConfig() as
+    begin
+       insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'TearDownConfig()', current_date, current_time);
+    end;
+  @TestSetUpTest()
+  PUBLIC procedure SetUpTest() as
+    begin
+        using sqlscript_test as testing;
+         insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'SetUpTest()', current_date, current_time);
+    end;
+  @TestTearDownTest()
+  PUBLIC procedure TearDownTest() as
+    begin
+        insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'TearDownTest()', current_date, current_time);
+    end;
+    @TestClassification('GoodInputData')
+  @Test()
+  PUBLIC procedure TestA as
+    begin
+        using "HA150::SQLSCRIPT_TEST" as testing;
+        DECLARE r_count INT = 1;
+        DECLARE comparison_list TABLE (PRODUCT_ID NVARCHAR(10), CATEGORY NVARCHAR(40), CURRENCY_CODE NVARCHAR(5), PRICE DECIMAL(15,2));
+        insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'First Test:  Import Parameter = PC', current_date, current_time);
+	CALL "HA150::AnalyzeCompanyAssets"(IM_CATEGORY => 'PC',EX_PRODUCT_LIST => comparison_list);        
+	r_count = record_count(:comparison_list);
+	testing:expect_ne(0, :r_count);
+
+    end;
+ @Test()
+  PUBLIC procedure TestB as
+    begin
+        using "HA150::SQLSCRIPT_TEST" as testing;
+        DECLARE r_count INT = 1;
+        DECLARE comparison_list TABLE (PRODUCT_ID NVARCHAR(10), CATEGORY NVARCHAR(40), CURRENCY_CODE NVARCHAR(5), PRICE DECIMAL(15,2));
+        insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'Second Test:  Import Parameter = Flat screens', current_date, current_time);
+	CALL "HA150::AnalyzeCompanyAssets"(IM_CATEGORY => 'Flat screens',EX_PRODUCT_LIST => comparison_list);        
+	r_count = record_count(:comparison_list);
+	testing:expect_ne(0, :r_count);
+    end;
+  @TestClassification('BadInputData')
+  @Test()
+  PUBLIC procedure TestC as
+    begin
+        using "HA150::SQLSCRIPT_TEST" as testing;
+        DECLARE r_count INT = 0;
+        DECLARE comparison_list TABLE (PRODUCT_ID NVARCHAR(10), CATEGORY NVARCHAR(40), CURRENCY_CODE NVARCHAR(5), PRICE DECIMAL(15,2));
+        insert into "HA150::UNIT_TEST_RESULTS" values('AnalyzeCompanyAssets Procedure', 'Third Test:  Import Parameter = Automobiles', current_date, current_time);
+		CALL "HA150::AnalyzeCompanyAssets"(IM_CATEGORY => 'Automobiles',EX_PRODUCT_LIST => comparison_list);  
+		r_count = record_count(:comparison_list);
+		testing:expect_eq(0, :r_count);
+    end;
+END

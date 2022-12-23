@@ -1,0 +1,53 @@
+-- Code for step 2
+CREATE COLUMN TABLE EMPLOYEE_LIST_HISTORY(
+            empl_no NVARCHAR(10),
+            empl_name NVARCHAR(200),
+            empl_department  NVARCHAR(20),
+            valid_from TIMESTAMP NOT NULL,
+            valid_to TIMESTAMP NOT NULL);
+
+
+-- Code for step 3
+CREATE COLUMN TABLE EMPLOYEE_LIST(
+            empl_no  NVARCHAR(10) PRIMARY KEY,
+            empl_name NVARCHAR(200),
+            empl_department  NVARCHAR(20),
+            valid_from TIMESTAMP NOT NULL GENERATED ALWAYS AS ROW START,
+            valid_to TIMESTAMP NOT NULL GENERATED ALWAYS AS ROW END,
+            period FOR SYSTEM_TIME(
+                        valid_from,
+                        valid_to)
+)
+WITH SYSTEM VERSIONING HISTORY TABLE "EMPLOYEE_LIST_HISTORY" VALIDATED;
+
+
+-- Code for step 4
+INSERT INTO EMPLOYEE_LIST VALUES('1', 'Bugs Bunny', 'Marketing');
+SELECT * FROM EMPLOYEE_LIST;           --Should have one brand new record
+SELECT * FROM EMPLOYEE_LIST_HISTORY;   --Empty at this point;
+
+
+-- Code for step 5
+UPDATE EMPLOYEE_LIST SET empl_department = 'IT' WHERE empl_no = '1';    --This creates another new version of the record
+SELECT * FROM EMPLOYEE_LIST;
+SELECT * FROM EMPLOYEE_LIST_HISTORY;  --Now two previous versions of the record are stored
+
+
+-- Code for step 6
+UPDATE EMPLOYEE_LIST SET empl_department = 'Operations' WHERE empl_no = '1';    --This creates yet another new version of the record
+SELECT * FROM EMPLOYEE_LIST;
+SELECT * FROM EMPLOYEE_LIST_HISTORY;                                           --Now two previous versions of the record are stored
+
+
+-- Code for step 8 and 9 and 10
+SELECT * FROM EMPLOYEE_LIST FOR SYSTEM_TIME AS OF '<timestamp_value>';
+
+
+-- Code for step 11
+SELECT * FROM EMPLOYEE_LIST FOR SYSTEM_TIME FROM '2019-01-01 00:00:00.000000000' TO '9999-12-31 23:59:59.999999900';
+
+
+-- Code for step 12
+DROP TABLE EMPLOYEE_LIST;
+DROP TABLE EMPLOYEE_LIST_HISTORY;  --Not able to drop a history table unless the table referring to it is dropped first
+

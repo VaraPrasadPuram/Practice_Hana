@@ -1,0 +1,80 @@
+{
+  "HA150::EMPLOYEE": {
+    "target": {
+      "object": "EMPLOYEE",
+      "schema": "TRAINING"
+    }
+  },
+  "HA150::STOLEN": {
+    "target": {
+      "object": "STOLEN",
+      "schema": "TRAINING"
+    }
+  },
+  "HA150::CAR": {
+    "target": {
+      "object": "CAR",
+      "schema": "TRAINING"
+    }
+  },
+  "HA150::OWNER": {
+    "target": {
+      "object": "OWNER",
+      "schema": "TRAINING"
+    }
+  },
+  "HA150::OWNER_EU": {
+    "target": {
+      "object": "OWNER_EU",
+      "schema": "TRAINING"
+    }
+  },
+  "HA150::DUMMY": {
+    "target": {
+      "object": "DUMMY",
+      "schema": "SYS"
+    }
+  },
+  "HA150::SQLSCRIPT_TEST": {
+    "target": {
+      "object": "SQLSCRIPT_TEST",
+      "schema": "SYS"
+    }
+  },
+  "HA150::CONTACT": {
+    "target": {
+      "object": "CONTACT",
+      "schema": "TRAINING"
+    }
+  },
+     "HA150::OFFICIAL": {
+    "target": {
+      "object": "OFFICIAL",
+      "schema": "TRAINING"
+    }
+  },
+  "HA150::SQLSCRIPT_LOGGING": {
+    "target": {
+      "object": "SQLSCRIPT_LOGGING",
+      "schema": "SYS"
+    }
+  },
+  "HA150::M_DATABASE": {
+    "target": {
+      "object": "M_DATABASE",
+      "schema": "SYS"
+    }
+  },
+  "HA150::SNWD_PD": {
+    "target": {
+      "object": "SNWD_PD",
+      "schema": "EPM_MODEL"
+    }
+  },
+   "HA150::CAR_EU": {
+    "target": {
+      "object": "CAR_EU",
+      "schema": "TRAINING"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+FUNCTION "HA150::RemainderDays_Variablevalue" (im_remainderdays INTEGER, im_depid NVARCHAR(3)) 
+
+RETURNS ex_result DECIMAL(15,2) 
+
+
+LANGUAGE SQLSCRIPT 
+
+SQL SECURITY INVOKER
+
+
+AS 
+
+
+BEGIN 
+
+IF :im_depid = 'A01'                       -- Planning Department 
+
+THEN ex_result := :im_remainderdays * 350; 
+
+ELSEIF :im_depid = 'A02'                   -- Development Department 
+
+THEN ex_result := :im_remainderdays * 310; 
+
+ELSEIF :im_depid = 'A03'                   -- Test Department 
+
+THEN ex_result := :im_remainderdays * 290; 
+
+ELSEIF :im_depid = 'A04'                   -- Sales Department 
+
+THEN ex_result := :im_remainderdays * 325;
+
+
+ELSE ex_result := :im_remainderdays * 300; -- Other Deptartments
+
+
+END IF;
+
+
+END;

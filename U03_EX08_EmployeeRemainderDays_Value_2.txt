@@ -1,0 +1,71 @@
+FUNCTION "HA150::EmployeeRemainderDays_Value_2" (im_filter VARCHAR(1000)) 
+
+RETURNS TABLE (DNumber NVARCHAR(7), DepID NVARCHAR(3), RemainderDays_Value DECIMAL(15,2))
+
+LANGUAGE SQLSCRIPT 
+
+SQL SECURITY INVOKER 
+
+
+AS 
+
+
+BEGIN 
+
+
+DECLARE lv_filter VARCHAR(1000) := :im_filter;
+
+
+-- construct table for conversion rate 
+
+DECLARE depid nvarchar(3) ARRAY;
+
+
+DECLARE worth DECIMAL(5,2) ARRAY; 
+
+depid[1] := 'A01'; worth[1] := 350; 
+
+depid[2] := 'A02'; worth[2] := 310; 
+
+depid[3] := 'A03'; worth[3] := 290; 
+
+depid[4] := 'A04'; worth[4] := 325;
+
+
+
+lt_conversion = UNNEST(:depid,:worth) as (DepID,Worth); 
+
+-- converts the array to a table 
+
+
+-- use a block to make sure the RETURN statement executes even in the case of an exception 
+
+BEGIN 
+
+DECLARE EXIT HANDLER FOR SQL_ERROR_CODE 257, SQL_ERROR_CODE 260 
+
+BEGIN 
+
+-- APPLY_FILTER requires a scalar variable as input as literals do not work 
+
+lv_filter := ''; 
+
+lt_employee = APPLY_FILTER("HA150::EMPLOYEE", :lv_filter); 
+
+END; 
+
+lt_employee = APPLY_FILTER("HA150::EMPLOYEE", :lv_filter); 
+
+END;
+
+
+RETURN 
+
+
+SELECT DNumber, emp.DepID, RemainderDays * Worth 
+AS RemainderDays_Value 
+
+FROM :lt_employee emp LEFT OUTER JOIN :lt_conversion cnv ON emp.DepID = cnv.DepID;
+
+
+END;

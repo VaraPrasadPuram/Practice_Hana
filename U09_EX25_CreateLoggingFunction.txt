@@ -1,0 +1,25 @@
+CREATE FUNCTION "HA150::AnalyzeCompanyAssetsLogging"(in im_category VARCHAR(40) )
+       RETURNS TABLE (PRODUCT_ID NVARCHAR(10), CURRENCY_CODE NVARCHAR(5), PRICE DECIMAL(15,2)) 
+       LANGUAGE SQLSCRIPT 
+       SQL SECURITY INVOKER AS 
+BEGIN USING "HA150::SQLSCRIPT_LOGGING" AS LOGGING_LIB;
+
+DECLARE invalid_category CONDITION FOR SQL_ERROR_CODE 10001;
+
+	IF EXISTS (SELECT * FROM "HA150::SNWD_PD" WHERE category = :im_category) THEN
+
+		IF :im_category = 'PC' THEN
+			RETURN SELECT product_id, currency_code, price FROM "HA150::SNWD_PD" WHERE category IN ('PC', 'Notebooks', 'Handheld');
+		ELSEIF :im_category = 'Flat screens' THEN
+			RETURN SELECT product_id, currency_code, price FROM "HA150::SNWD_PD" WHERE category IN ('Flat screens', 'Flat-screen television');
+		ELSE
+			RETURN SELECT product_id, currency_code, price FROM "HA150::SNWD_PD" WHERE category = :im_category;
+		END IF;
+		
+	ELSE
+	CALL LOGGING_LIB:LOG('error', 'InvalidCategory', 'Category does not exist');    --LEVEL, TOPIC, MESSAGE
+	SIGNAL invalid_category SET MESSAGE_TEXT = 'Category does not exist';
+	END IF;
+	
+END;
+

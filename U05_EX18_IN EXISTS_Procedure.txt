@@ -1,0 +1,24 @@
+PROCEDURE "HA150::AnalyzeCompanyAssets"(in im_category VARCHAR(40), out ex_product_list TABLE (PRODUCT_ID NVARCHAR(10), CATEGORY NVARCHAR(40), CURRENCY_CODE NVARCHAR(5), PRICE DECIMAL(15,2)))
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   READS SQL DATA AS
+   
+BEGIN
+
+DECLARE invalid_category CONDITION FOR SQL_ERROR_CODE 10001;
+
+	IF EXISTS (SELECT * FROM "HA150::SNWD_PD" WHERE category = :im_category) THEN
+
+		IF :im_category = 'PC' THEN
+			ex_product_list = SELECT product_id, category, currency_code, price FROM "HA150::SNWD_PD" WHERE category IN ('PC', 'Notebooks', 'Handheld');
+		ELSEIF :im_category = 'Flat screens' THEN
+			ex_product_list = SELECT product_id, category, currency_code, price FROM "HA150::SNWD_PD" WHERE category IN ('Flat screens', 'Flat-screen television');
+		ELSE
+			ex_product_list = SELECT product_id, category, currency_code, price FROM "HA150::SNWD_PD" WHERE category = :im_category;
+		END IF;
+		
+	ELSE
+	SIGNAL invalid_category SET MESSAGE_TEXT = 'Category does not exist';
+	END IF;
+
+END;

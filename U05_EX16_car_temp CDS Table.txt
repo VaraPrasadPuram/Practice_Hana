@@ -1,0 +1,12 @@
+namespace HA150;
+
+entity car_temp {
+	key "CARID" : String(3);
+	 "PLATENUMBER" : String(10);
+	 "BRAND" : String(20);
+	 "COLOR" : String(10);
+	 "HP" : Integer ;
+	 "OWNER" : String(3);
+}
+technical configuration{column store;}
+;

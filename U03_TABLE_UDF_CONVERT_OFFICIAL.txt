@@ -1,0 +1,87 @@
+-- Step 1: Simple function
+CREATE FUNCTION Convert_OfficialsHours(im_filter VARCHAR(1000), im_to VARCHAR(1))
+  RETURNS TABLE (PNr      nvarchar(3),
+                 Name     nvarchar(20), 
+                 Overtime dec(5,2))
+AS BEGIN
+  lt_official = APPLY_FILTER(Official,:im_filter);
+
+  RETURN SELECT PNr, Name, Convert_Hours(Overtime,:im_to) as Overtime
+           FROM :lt_official; 
+END;
+
+SELECT * FROM Convert_OfficialsHours('Name LIKE ''%Ms%''','d');
+SELECT * FROM Convert_OfficialsHours('Name LIKE %Ms%','d'); -- shows exception
+
+
+
+-- Step 2: Add exception handling and a block
+DROP FUNCTION Convert_OfficialsHours;
+CREATE FUNCTION Convert_OfficialsHours(im_filter VARCHAR(1000), im_to VARCHAR(1))
+  RETURNS TABLE (PNr      nvarchar(3),
+                 Name     nvarchar(20), 
+                 Overtime dec(5,2))
+AS BEGIN
+
+  DECLARE lv_filter NVARCHAR(1000) := :im_filter;
+  
+  -- use a block to make sure the RETURN statement is executed even in case of an exception
+  BEGIN
+    DECLARE EXIT HANDLER FOR SQL_ERROR_CODE 257, SQL_ERROR_CODE 260 --or SQLEXCEPTION
+    BEGIN
+      lv_filter := '';
+      -- APPLY_FILTER needs a scalar variable as second argument, a literal does not work
+      lt_official = APPLY_FILTER(Official,:lv_filter);
+    END;  
+    lt_official = APPLY_FILTER(Official,:lv_filter);  
+  END;
+  
+  RETURN SELECT PNr, Name, Convert_Hours(Overtime,:im_to) as Overtime
+           FROM :lt_official; 
+END;
+
+SELECT * FROM Convert_OfficialsHours('Name LIKE ''%Ms%''','d');
+SELECT * FROM Convert_OfficialsHours('Name LIKE %Ms%','d');
+
+-- Step 3: get rid of scalar function using a local table
+--         Note that using a real table would make more sense, of course
+DROP FUNCTION Convert_OfficialsHours;
+CREATE FUNCTION Convert_OfficialsHours(im_filter VARCHAR(1000), im_to VARCHAR(1))
+  RETURNS TABLE (PNr      nvarchar(3),
+                 Name     nvarchar(20), 
+                 Overtime dec(16,2))
+AS BEGIN
+
+  DECLARE lv_filter NVARCHAR(1000) := :im_filter;
+  DECLARE lv_factor dec(5,2);  
+  -- construct a local table
+  DECLARE unit   varchar(1) ARRAY;
+  DECLARE factor dec(5,2)   ARRAY;
+  unit[1]   := 'm';  factor[1] := 60;
+  unit[2]   := 'h';  factor[2] := 1;
+  unit[3]   := 'd';  factor[3] := 1.0/24.0;  
+  lt_conversion = UNNEST(:unit,:factor) AS (Unit,Factor);
+
+  -- Read the conversion factor from the local table
+  SELECT COALESCE(Factor,1.0)
+    INTO lv_factor
+    FROM :lt_conversion
+   WHERE Unit = :im_to;
+  
+  -- use a block to make sure the RETURN statement is executed even in case of an exception
+  BEGIN
+    DECLARE EXIT HANDLER FOR SQL_ERROR_CODE 257 --or SQLEXCEPTION
+    BEGIN
+      lv_filter := '';
+      -- APPLY_FILTER needs a scalar variable as second argument, a literal does not work
+      lt_official = APPLY_FILTER(Official,:lv_filter);
+    END;  
+    lt_official = APPLY_FILTER(Official,:lv_filter);  
+  END;
+  
+  RETURN SELECT PNr, Name, Overtime*:lv_factor as Overtime
+           FROM :lt_official; 
+END;
+
+SELECT * FROM Convert_OfficialsHours('Name LIKE ''%Ms%''','d');
+SELECT * FROM Convert_OfficialsHours('Name LIKE %Ms%','d');

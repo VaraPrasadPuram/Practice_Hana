@@ -1,0 +1,19 @@
+PROCEDURE "HA150::PlateNumber_Temp_proc" ( )
+LANGUAGE SQLSCRIPT AS 
+BEGIN 
+DECLARE v_platenumber VARCHAR(20) = ''; 
+DECLARE CURSOR c_cursorpn (v_platenumber VARCHAR(20)) 
+	FOR SELECT
+		* 
+	FROM "HA150::car_temp"
+	WHERE PlateNumber IS NULL 
+	ORDER BY carId
+	FOR UPDATE; 
+
+FOR cur_row AS c_cursorpn (v_platenumber) 
+DO 
+UPDATE "HA150::car_temp"
+	SET PlateNumber = 'TEMP_' || CarID
+		WHERE CURRENT OF c_cursorpn;
+END FOR;
+END;

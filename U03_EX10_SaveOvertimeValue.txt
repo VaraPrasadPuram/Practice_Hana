@@ -1,0 +1,28 @@
+PROCEDURE "HA150::SaveOvertimeValue" ( ) 
+
+
+LANGUAGE SQLSCRIPT 
+
+SQL SECURITY INVOKER
+
+
+-- READS SQL DATA -- remove this as you will be using DDL statements 
+
+
+AS
+
+
+BEGIN
+
+
+CREATE COLUMN TABLE OvertimeValue (Name VARCHAR(20), Value DECIMAL(15,2)); 
+
+
+INSERT INTO OvertimeValue 
+(Name, Value) 
+SELECT Name, "HA150::RemainderDays_Variablevalue"(RemainderDays, DepID) 
+
+FROM "HA150::EMPLOYEE";
+
+
+END

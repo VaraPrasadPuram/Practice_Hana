@@ -1,0 +1,2 @@
+connect SYSTEM password W3lcome123;
+grant execute on SYS.SQLSCRIPT_RUN_TESTS_ON_ORIGINAL_DATA to "<user>";

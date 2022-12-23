@@ -1,0 +1,11 @@
+FUNCTION "HA150::Remainderdays_Fixedvalue" (im_remainderdays INTEGER) 
+RETURNS ex_result DECIMAL(15,2) 
+
+LANGUAGE SQLSCRIPT 
+SQL SECURITY INVOKER 
+
+AS 
+
+BEGIN ex_result := :im_remainderdays * 300;
+
+END;

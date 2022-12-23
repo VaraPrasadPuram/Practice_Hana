@@ -1,0 +1,12 @@
+FUNCTION "HA150::MAPPER" (IN im_id int, IN im_strdata varchar(2000))
+RETURNS TABLE (id int, val varchar(20), freq int)
+LANGUAGE SQLSCRIPT
+READS SQL DATA 
+AS
+
+BEGIN USING sqlscript_string as lib;
+DECLARE lt_split_result TABLE(result varchar(20));
+lt_split_result = lib:split_to_table(im_strdata, ' ');
+    RETURN SELECT :im_id AS ID, result as VAL, count(result) as freq
+     FROM :lt_split_result GROUP BY result ; 
+END;

@@ -1,0 +1,7 @@
+namespace HA150;
+
+entity data_table 
+{
+    	col1     	: integer;
+}
+technical configuration {column store;};

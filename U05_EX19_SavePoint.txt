@@ -1,0 +1,47 @@
+PROCEDURE "HA150::SAVEPOINT_TEST"(out ex_table_records table(PO_ID INT, PO_ITEM_POS NVARCHAR(10), PRODUCT_ID NVARCHAR(10), QUANTITY INT) )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+   AS
+BEGIN
+
+  DECLARE i INTEGER;
+  
+  CREATE TABLE PURCHASE_ORDER(PO_ID INT);
+  CREATE TABLE PURCHASE_ORDER_LINE_ITEM(PARENT_ID INT, PO_ITEM_POS NVARCHAR(10), PRODUCT_ID NVARCHAR(10), QUANTITY INT);
+
+      FOR i IN 1..3
+      
+        DO
+          SAVEPOINT undo_header_and_line_items;
+          
+          INSERT INTO PURCHASE_ORDER VALUES(i);
+          
+          INSERT INTO PURCHASE_ORDER_LINE_ITEM VALUES(i,'10','HT-1000','1');
+          INSERT INTO PURCHASE_ORDER_LINE_ITEM VALUES(i,'20','HT-2000','2');
+          INSERT INTO PURCHASE_ORDER_LINE_ITEM VALUES(i,'30','HT-3000','3');
+          
+          IF i = 2 THEN
+            ROLLBACK TO SAVEPOINT undo_header_and_line_items;  -- Simulating an error to test Savepoint Functionality			
+            ELSE
+            COMMIT;
+          END IF;
+
+      END FOR;
+      
+      
+      --Output table should contain PO_ID’S “1” and “3”.  “2” was rolled back.
+
+
+      --FULL JOIN to verify no orphan records
+
+      ex_table_records = SELECT PO_ID, PO_ITEM_POS, PRODUCT_ID, QUANTITY
+                         FROM PURCHASE_ORDER FULL JOIN PURCHASE_ORDER_LINE_ITEM  
+                         ON PO_ID = PARENT_ID;
+
+                     
+      --Drop tables so procedure can be executed multiple times                  
+      DROP TABLE PURCHASE_ORDER;						
+      DROP TABLE PURCHASE_ORDER_LINE_ITEM; 
+
+END
+

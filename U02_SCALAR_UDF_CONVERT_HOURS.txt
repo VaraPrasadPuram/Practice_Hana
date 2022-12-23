@@ -1,0 +1,58 @@
+-- Step one: simple scalar UDF
+CREATE FUNCTION Convert_Hours(im_hours INTEGER) --, im_to varchar(1))
+  RETURNS ex_result DEC(5,2)
+AS BEGIN
+    ex_result := :im_hours * 60;
+END;
+
+SELECT PNr, Name, Overtime, Convert_Hours(Overtime) as Overminutes
+  FROM Official;
+
+-- Step two: extend to convert to different units
+--           shows multiple input parameters and if-the-elseif clause
+DROP FUNCTION Convert_Hours;
+CREATE FUNCTION Convert_Hours(im_hours INTEGER, im_to varchar(1))
+  RETURNS ex_result DEC(5,2)
+AS BEGIN
+  IF :im_to = 'm' THEN -- minutes
+    ex_result := :im_hours * 60;
+  ELSEIF :im_to = 'd' THEN -- days
+    ex_result := :im_hours / 24;
+  ELSE
+    ex_result := im_hours;
+  END IF;
+END;
+
+SELECT PNr, Name, Overtime,
+       Convert_Hours(Overtime,'m') as Overminutes,
+       Convert_Hours(Overtime,'d') as Overdays
+  FROM Official;
+
+
+
+-- Step three: add raising exception
+DROP FUNCTION Convert_Hours;
+CREATE FUNCTION Convert_Hours(im_hours INTEGER, im_to varchar(1))
+  RETURNS ex_result DEC(5,2)
+AS BEGIN
+
+  DECLARE UNKNOWN_UNIT CONDITION  FOR SQL_ERROR_CODE 10001;
+  
+  IF :im_to = 'm' THEN -- minutes
+    ex_result := :im_hours * 60;
+  ELSEIF :im_to = 'd' THEN -- days
+    ex_result := :im_hours / 24;
+  ELSEIF :im_to = 'h' THEN
+    ex_result := im_hours;
+  ELSE
+    SIGNAL UNKNOWN_UNIT SET message_text = 'Target unit ' || :im_to || ' not supported';
+  END IF;
+END;
+
+SELECT PNr, Name, Overtime,
+       Convert_Hours(Overtime,'m') as Overminutes,
+       Convert_Hours(Overtime,'d') as Overdays
+  FROM Official;
+SELECT PNr, Name, Overtime,
+       Convert_Hours(Overtime,'s') as Overseconds
+  FROM Official; 

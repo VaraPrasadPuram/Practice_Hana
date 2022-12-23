@@ -1,0 +1,12 @@
+DO BEGIN
+    using SQLSCRIPT_LOGGING as LIB;
+    
+    call LIB:CREATE_CONFIGURATION('config1');
+    call LIB:SET_OUTPUT_TABLE('config1', current_schema, 'HA150::LOG_TABLE');
+    call LIB:SET_LEVEL('config1', 'debug');
+    call LIB:ADD_SQLSCRIPT_OBJECT('config1', current_schema, 'HA150::AnalyzeCompanyAssetsLogging');
+    call LIB:START_LOGGING('config1');
+    SELECT * FROM "HA150_##_HDI_CONTAINER_1"."HA150::AnalyzeCompanyAssetsLogging"('Automobiles');
+    call LIB:STOP_LOGGING('config1');
+    
+END;

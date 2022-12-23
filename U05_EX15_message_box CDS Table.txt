@@ -1,0 +1,8 @@
+namespace HA150;
+
+entity message_box 
+{
+    	pmsg     	: String(100);
+    	tstamp     	: LocalDate;
+}
+technical configuration {column store;};

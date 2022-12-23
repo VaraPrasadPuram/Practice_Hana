@@ -1,0 +1,19 @@
+PROCEDURE "HA150::USE_LIBRARY_MEMBERS" (in inval int) 
+LANGUAGE SQLSCRIPT 
+SQL SECURITY INVOKER 
+AS
+BEGIN 
+
+USING "HA150::mylib_##" as MYLIB;-- replace ## with your number 
+
+declare var1 int = MYLIB:BOUND_WITH_MAXVAL(:inval); 
+
+if :var1 > MYLIB:MAXVAL then select 'unexpected' from "HA150::DUMMY"; 
+
+else declare tv table ("Col1" int); 
+
+call MYLIB:GET_DATA(:var1, tv); 
+select count(*) from :tv; 
+end if; 
+
+END

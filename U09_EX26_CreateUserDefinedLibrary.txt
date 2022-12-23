@@ -1,0 +1,19 @@
+library "HA150::mylib_##"
+as 
+
+begin 
+   public variable maxval constant int = 100;  
+   public function bound_with_maxval(i int) returns x int as begin x = case when :i > :maxval then :maxval else :i 
+end;
+
+end; 
+
+   public procedure get_data(in size int, out result table("Col1" int)) 
+
+as 
+
+begin 
+result = select top :size "Col1" from "HA150::DATA_TABLE"; 
+end;
+
+end;

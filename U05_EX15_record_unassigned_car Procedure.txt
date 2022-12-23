@@ -1,0 +1,14 @@
+PROCEDURE "HA150::record_unassigned_car" () 
+LANGUAGE SQLSCRIPT AS 
+BEGIN 
+DECLARE v_platenumber VARCHAR(20) = '' ; 
+DECLARE CURSOR c_cursor1 (v_platenumber VARCHAR(20)) 
+FOR SELECT *
+		FROM "HA150::CAR" 
+		Where PlateNumber is NULL 
+		ORDER BY carId ; 
+FOR cur_row AS c_cursor1(v_platenumber) 
+DO 
+CALL "HA150::ins_msg_proc"('carID is: ' || cur_row.brand) ; 
+END FOR ;
+END ;

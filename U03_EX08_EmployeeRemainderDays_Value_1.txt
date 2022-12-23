@@ -1,0 +1,31 @@
+FUNCTION "HA150::EmployeeRemainderDays_Value_1" (im_filter VARCHAR(1000)) 
+
+
+RETURNS TABLE (DNumber NVARCHAR(7), DepID NVARCHAR(3), RemainderDays_Value DECIMAL(15,2)) 
+
+
+LANGUAGE SQLSCRIPT 
+
+SQL SECURITY INVOKER 
+
+
+AS 
+
+
+
+BEGIN 
+
+
+lt_employee = APPLY_FILTER("HA150::EMPLOYEE", :im_filter); 
+
+
+RETURN 
+
+
+SELECT DNumber, DepID, "HA150::RemainderDays_Variablevalue"(RemainderDays, DepID) AS RemainderDays_Value 
+
+FROM :lt_employee;
+
+
+
+END;

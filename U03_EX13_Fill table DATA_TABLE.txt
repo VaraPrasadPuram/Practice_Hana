@@ -1,0 +1,6 @@
+do begin
+declare idx int = 0;
+for idx in 1..200 do
+insert into "HA150::DATA_TABLE" values (:idx);
+end for;
+end;

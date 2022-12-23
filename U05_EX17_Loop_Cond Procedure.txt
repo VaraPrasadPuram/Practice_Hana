@@ -1,0 +1,19 @@
+PROCEDURE "HA150::Loop_Cond" ( )
+LANGUAGE SQLSCRIPT AS 
+BEGIN DECLARE x integer ;
+FOR x IN 0 .. 10 DO 
+	IF :x < 3 
+	THEN 
+	CALL "HA150::ins_msg_proc"('Inside FOR Loop: IF COND 1: ' || :x);
+		CONTINUE ;
+	END IF ;
+	
+	IF :x = 5 
+	THEN 
+		CALL "HA150::ins_msg_proc"('Inside FOR Loop: IF COND 2: ' || :x);
+		BREAK ;
+	END IF ;
+	
+END FOR ;
+CALL "HA150::ins_msg_proc"('Broke out of Loop: ' || :x);
+END ;

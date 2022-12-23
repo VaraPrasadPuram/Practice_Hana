@@ -1,0 +1,7 @@
+CREATE FUNCTION Eighteenth_Birthday(im_birthday DATE)
+      RETURNS ex_result nvarchar(10)
+AS BEGIN
+  ex_result := COALESCE( DAYNAME( ADD_YEARS(im_birthday,18)), '-Company-' );
+END;
+
+SELECT OwnerID, Name, Eighteenth_Birthday(birthday) FROM owner;
